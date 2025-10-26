@@ -431,7 +431,7 @@ public class Config {
 
         ConfigurationSection notifySection = section.getConfigurationSection("notify");
         if (notifySection != null && notifySection.getBoolean("enable")) {
-            String notifyMessage = section.getString("message");
+            String notifyMessage = notifySection.getString("message");
             if (notifyMessage != null) {
                 actions.add("[NOTIFY] " + notifyMessage);
             }
