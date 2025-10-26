@@ -474,9 +474,7 @@ public class Config {
     }
 
     public String[] getWorkFactorsAsStringArray(String str) {
-        return str.contains(";")
-                ? str.trim().split(";")
-                : new String[]{str.trim()};
+        return str.trim().split(";");
     }
 
     public void setupExcluded(FileConfiguration config) {
