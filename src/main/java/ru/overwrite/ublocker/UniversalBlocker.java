@@ -123,7 +123,7 @@ public final class UniversalBlocker extends JavaPlugin {
             } else {
                 pluginLogger.info("§aВы используете устаревшую или некорректную версию плагина!");
                 pluginLogger.info("§aВы можете загрузить последнюю версию плагина здесь:");
-                pluginLogger.info("§bhttps://github.com/Overwrite987/UniversalBlocker/releases/latest");
+                pluginLogger.info("§bhttps://github.com/OverwriteMC/UniversalBlocker/releases/latest");
             }
             pluginLogger.info("§6========================================");
         });

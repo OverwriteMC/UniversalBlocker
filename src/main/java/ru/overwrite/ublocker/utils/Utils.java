@@ -444,7 +444,7 @@ public class Utils {
         plugin.getRunner().runDelayedAsync(() -> {
             try (BufferedReader reader = new BufferedReader(
                     new InputStreamReader(
-                            new URL("https://raw.githubusercontent.com/Overwrite987/UniversalBlocker/master/VERSION")
+                            new URL("https://raw.githubusercontent.com/OverwriteMC/UniversalBlocker/master/VERSION")
                                     .openStream()))) {
                 consumer.accept(reader.readLine().trim());
             } catch (IOException exception) {
