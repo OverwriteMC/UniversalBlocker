@@ -46,7 +46,7 @@ public class ConditionChecker {
                     if (startIndex == -1) return false;
                     String placeholderValue = Utils.parsePlaceholders(context.substring(0, startIndex).trim(), p);
                     String value = context.substring(startIndex + 1).trim();
-                    meetsCondition = evaluateCondition(operator, placeholderValue.equals(value));
+                    meetsCondition = evaluatePlaceholderCondition(operator,placeholderValue, value);
                     break;
                 }
                 default: {
@@ -67,6 +67,30 @@ public class ConditionChecker {
             case "!=" -> !conditionMet;
             default -> throw new IllegalArgumentException("Unsupported operator: " + operator);
         };
+    }
+
+    private boolean evaluatePlaceholderCondition(String operator, String placeholderValue, String expectedValue) {
+        try {
+            if (operator.equals("==")) {
+                return placeholderValue.equals(expectedValue);
+            } else if (operator.equals("!=")) {
+                return !placeholderValue.equals(expectedValue);
+            }
+
+            double placeholderNum = Double.parseDouble(placeholderValue);
+            double expectedNum = Double.parseDouble(expectedValue);
+
+            return switch (operator) {
+                case "<" -> placeholderNum < expectedNum;
+                case "<=" -> placeholderNum <= expectedNum;
+                case ">" -> placeholderNum > expectedNum;
+                case ">=" -> placeholderNum >= expectedNum;
+                default -> false;
+            };
+
+        } catch (NumberFormatException e) {
+            return false;
+        }
     }
 
 }
