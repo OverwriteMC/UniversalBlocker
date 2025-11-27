@@ -478,7 +478,9 @@ public class Config {
     }
 
     public void setupExcluded(FileConfiguration config) {
-        excludedPlayers = ImmutableSet.copyOf(config.getStringList("excluded_players"));
+        excludedPlayers = config.getConfigurationSection("main_settings").getBoolean("enable_excluded_players", false)
+                ? ImmutableSet.copyOf(config.getStringList("excluded_players"))
+                : Set.of();
     }
 
     public FileConfiguration getFile(String path, String fileName) {
