@@ -12,6 +12,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.plugin.messaging.Messenger;
+import ru.overwrite.ublocker.color.ColorizerProvider;
 import ru.overwrite.ublocker.configuration.Config;
 import ru.overwrite.ublocker.listeners.chat.*;
 import ru.overwrite.ublocker.listeners.commands.*;
@@ -65,7 +66,7 @@ public final class UniversalBlocker extends JavaPlugin {
         }
         final FileConfiguration config = pluginConfig.getFile(getDataFolder().getAbsolutePath(), "config.yml");
         final ConfigurationSection settings = config.getConfigurationSection("settings");
-        Utils.setupColorizer(settings);
+        ColorizerProvider.init(settings);
         Utils.IGNORE_UNKNOWN_COMMANDS = settings.getBoolean("ignore_unknown_commands");
         this.setupPlaceholders(settings, getServer().getPluginManager());
         this.setupPath(settings);

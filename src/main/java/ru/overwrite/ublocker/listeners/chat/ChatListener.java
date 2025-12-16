@@ -10,6 +10,7 @@ import org.bukkit.event.Listener;
 import ru.overwrite.ublocker.UniversalBlocker;
 import ru.overwrite.ublocker.actions.Action;
 import ru.overwrite.ublocker.actions.ActionType;
+import ru.overwrite.ublocker.color.ColorizerProvider;
 import ru.overwrite.ublocker.configuration.Config;
 import ru.overwrite.ublocker.task.Runner;
 import ru.overwrite.ublocker.utils.Utils;
@@ -137,7 +138,7 @@ public abstract class ChatListener implements Listener {
 
     private String formatActionMessage(Action action, String[] searchList, String[] replacementList) {
         return Utils.replaceEach(
-                Utils.COLORIZER.colorize(action.context()),
+                ColorizerProvider.COLORIZER.colorize(action.context()),
                 searchList,
                 replacementList
         );

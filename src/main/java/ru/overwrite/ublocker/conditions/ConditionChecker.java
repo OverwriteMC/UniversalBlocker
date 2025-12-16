@@ -46,7 +46,7 @@ public class ConditionChecker {
                     if (startIndex == -1) return false;
                     String placeholderValue = Utils.parsePlaceholders(context.substring(0, startIndex).trim(), p);
                     String value = context.substring(startIndex + 1).trim();
-                    meetsCondition = evaluatePlaceholderCondition(operator,placeholderValue, value);
+                    meetsCondition = evaluatePlaceholderCondition(operator, placeholderValue, value);
                     break;
                 }
                 default: {

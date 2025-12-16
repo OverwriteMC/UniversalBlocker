@@ -10,6 +10,7 @@ import ru.overwrite.ublocker.UniversalBlocker;
 import ru.overwrite.ublocker.actions.Action;
 import ru.overwrite.ublocker.actions.ActionType;
 import ru.overwrite.ublocker.blockgroups.CommandGroup;
+import ru.overwrite.ublocker.color.ColorizerProvider;
 import ru.overwrite.ublocker.configuration.Config;
 import ru.overwrite.ublocker.utils.Utils;
 
@@ -145,6 +146,6 @@ public class ConsoleBlocker implements Listener {
     }
 
     private String formatActionMessage(Action action, String[] replacementList) {
-        return Utils.replaceEach(Utils.COLORIZER.colorize(action.context()), searchList, replacementList);
+        return Utils.replaceEach(ColorizerProvider.COLORIZER.colorize(action.context()), searchList, replacementList);
     }
 }

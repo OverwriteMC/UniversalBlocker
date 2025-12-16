@@ -11,14 +11,9 @@ import net.kyori.adventure.text.event.HoverEvent;
 import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import org.bukkit.Bukkit;
 import org.bukkit.Sound;
-import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 import ru.overwrite.ublocker.UniversalBlocker;
-import ru.overwrite.ublocker.utils.color.Colorizer;
-import ru.overwrite.ublocker.utils.color.impl.LegacyAdvancedColorizer;
-import ru.overwrite.ublocker.utils.color.impl.LegacyColorizer;
-import ru.overwrite.ublocker.utils.color.impl.MiniMessageColorizer;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -64,16 +59,6 @@ public class Utils {
             message = PlaceholderAPI.setPlaceholders(player, message);
         }
         return message;
-    }
-
-    public Colorizer COLORIZER;
-
-    public void setupColorizer(ConfigurationSection mainSettings) {
-        COLORIZER = switch (mainSettings.getString("serializer", "LEGACY").toUpperCase()) {
-            case "MINIMESSAGE" -> new MiniMessageColorizer();
-            case "LEGACY_ADVANCED" -> new LegacyAdvancedColorizer();
-            default -> new LegacyColorizer();
-        };
     }
 
     public boolean DEBUG_CHAT;
