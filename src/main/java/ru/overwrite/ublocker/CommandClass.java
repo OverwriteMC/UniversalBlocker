@@ -11,6 +11,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.HandlerList;
 import org.bukkit.util.StringUtil;
 import org.jetbrains.annotations.NotNull;
+import ru.overwrite.ublocker.color.ColorizerProvider;
 import ru.overwrite.ublocker.configuration.Config;
 import ru.overwrite.ublocker.listeners.chat.ChatListener;
 import ru.overwrite.ublocker.listeners.commands.CommandBlocker;
@@ -121,7 +122,7 @@ public class CommandClass implements TabExecutor {
         HandlerList.unregisterAll(plugin);
         final FileConfiguration config = pluginConfig.getFile(plugin.getDataFolder().getAbsolutePath(), "config.yml");
         final ConfigurationSection settings = config.getConfigurationSection("settings");
-        Utils.setupColorizer(settings);
+        ColorizerProvider.init(settings);
         Utils.IGNORE_UNKNOWN_COMMANDS = settings.getBoolean("ignore_unknown_commands");
         plugin.setupPlaceholders(settings, Bukkit.getPluginManager());
         plugin.setupPath(settings);
