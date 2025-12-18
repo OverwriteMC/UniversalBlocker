@@ -12,6 +12,7 @@ import ru.overwrite.ublocker.conditions.ConditionChecker;
 import ru.overwrite.ublocker.utils.Utils;
 
 import java.util.List;
+import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -45,13 +46,13 @@ public class ChatBlocker extends SymbolBlocker {
             }
             switch (group.blockType()) {
                 case STRING: {
-                    if (checkStringBlock(e, p, message, group)) {
+                    if (checkStringBlock(e, p, message, group.symbolsToBlock(), actions)) {
                         break outer;
                     }
                     break;
                 }
                 case PATTERN: {
-                    if (checkPatternBlock(e, p, message, group)) {
+                    if (checkPatternBlock(e, p, message, group.patternsToBlock(), actions)) {
                         break outer;
                     }
                     break;
@@ -60,11 +61,10 @@ public class ChatBlocker extends SymbolBlocker {
         }
     }
 
-    private boolean checkStringBlock(AsyncPlayerChatEvent e, Player p, String message, SymbolGroup group) {
-        for (String symbol : group.symbolsToBlock()) {
+    private boolean checkStringBlock(AsyncPlayerChatEvent e, Player p, String message, Set<String> symbolsToBlock, List<Action> actions) {
+        for (String symbol : symbolsToBlock) {
             if (message.contains(symbol)) {
                 Utils.printDebug("Message '" + message + "' contains blocked symbol" + symbol + ". (String)", Utils.DEBUG_SYMBOLS);
-                List<Action> actions = group.actionsToExecute();
                 super.executeActions(e, p, message, symbol, actions);
                 return true;
             }
@@ -72,12 +72,11 @@ public class ChatBlocker extends SymbolBlocker {
         return false;
     }
 
-    private boolean checkPatternBlock(AsyncPlayerChatEvent e, Player p, String message, SymbolGroup group) {
-        for (Pattern pattern : group.patternsToBlock()) {
+    private boolean checkPatternBlock(AsyncPlayerChatEvent e, Player p, String message, Set<Pattern> patternsToBlock, List<Action> actions) {
+        for (Pattern pattern : patternsToBlock) {
             Matcher matcher = pattern.matcher(message);
             if (matcher.find()) {
                 Utils.printDebug("Message '" + message + "' contains blocked symbol" + matcher.group() + ". (Pattern)", Utils.DEBUG_SYMBOLS);
-                List<Action> actions = group.actionsToExecute();
                 super.executeActions(e, p, message, matcher.group(), actions);
                 return true;
             }

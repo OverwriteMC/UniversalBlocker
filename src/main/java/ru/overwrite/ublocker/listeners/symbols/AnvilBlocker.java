@@ -13,6 +13,7 @@ import ru.overwrite.ublocker.conditions.ConditionChecker;
 import ru.overwrite.ublocker.utils.Utils;
 
 import java.util.List;
+import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -53,13 +54,13 @@ public class AnvilBlocker extends SymbolBlocker {
             }
             switch (group.blockType()) {
                 case STRING: {
-                    if (checkStringBlock(e, p, name, group)) {
+                    if (checkStringBlock(e, p, name, group.symbolsToBlock(), actions)) {
                         break outer;
                     }
                     break;
                 }
                 case PATTERN: {
-                    if (checkPatternBlock(e, p, name, group)) {
+                    if (checkPatternBlock(e, p, name, group.patternsToBlock(), actions)) {
                         break outer;
                     }
                     break;
@@ -68,11 +69,10 @@ public class AnvilBlocker extends SymbolBlocker {
         }
     }
 
-    private boolean checkStringBlock(InventoryClickEvent e, Player p, String name, SymbolGroup group) {
-        for (String symbol : group.symbolsToBlock()) {
+    private boolean checkStringBlock(InventoryClickEvent e, Player p, String name, Set<String> symbolsToBlock, List<Action> actions) {
+        for (String symbol : symbolsToBlock) {
             if (name.contains(symbol)) {
                 Utils.printDebug("Item name '" + name + "' contains blocked symbol" + symbol + ". (String)", Utils.DEBUG_SYMBOLS);
-                List<Action> actions = group.actionsToExecute();
                 super.executeActions(e, p, name, symbol, actions);
                 return true;
             }
@@ -80,12 +80,11 @@ public class AnvilBlocker extends SymbolBlocker {
         return false;
     }
 
-    private boolean checkPatternBlock(InventoryClickEvent e, Player p, String name, SymbolGroup group) {
-        for (Pattern pattern : group.patternsToBlock()) {
+    private boolean checkPatternBlock(InventoryClickEvent e, Player p, String name, Set<Pattern> patternsToBlock, List<Action> actions) {
+        for (Pattern pattern : patternsToBlock) {
             Matcher matcher = pattern.matcher(name);
             if (matcher.find()) {
                 Utils.printDebug("Item name '" + name + "' contains blocked symbol" + matcher.group() + ". (Pattern)", Utils.DEBUG_SYMBOLS);
-                List<Action> actions = group.actionsToExecute();
                 super.executeActions(e, p, name, matcher.group(), actions);
                 return true;
             }

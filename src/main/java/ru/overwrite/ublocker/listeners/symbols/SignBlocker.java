@@ -12,6 +12,7 @@ import ru.overwrite.ublocker.conditions.ConditionChecker;
 import ru.overwrite.ublocker.utils.Utils;
 
 import java.util.List;
+import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -49,13 +50,13 @@ public class SignBlocker extends SymbolBlocker {
             }
             switch (group.blockType()) {
                 case STRING: {
-                    if (checkStringBlock(e, p, line0, line1, line2, line3, group)) {
+                    if (checkStringBlock(e, p, combined, group.symbolsToBlock(), actions)) {
                         break outer;
                     }
                     break;
                 }
                 case PATTERN: {
-                    if (checkPatternBlock(e, p, combined, group)) {
+                    if (checkPatternBlock(e, p, combined, group.patternsToBlock(), actions)) {
                         break outer;
                     }
                     break;
@@ -64,12 +65,10 @@ public class SignBlocker extends SymbolBlocker {
         }
     }
 
-    private boolean checkStringBlock(SignChangeEvent e, Player p, String line0, String line1, String line2, String line3, SymbolGroup group) {
-        for (String symbol : group.symbolsToBlock()) {
-            if (line0.contains(symbol) || line1.contains(symbol) || line2.contains(symbol) || line3.contains(symbol)) {
-                String combined = line0 + line1 + line2 + line3;
+    private boolean checkStringBlock(SignChangeEvent e, Player p, String combined, Set<String> symbolsToBlock, List<Action> actions) {
+        for (String symbol : symbolsToBlock) {
+            if (combined.contains(symbol)) {
                 Utils.printDebug("Sign message '" + combined + "' contains blocked symbol" + symbol + ". (String)", Utils.DEBUG_SYMBOLS);
-                List<Action> actions = group.actionsToExecute();
                 super.executeActions(e, p, combined, symbol, actions);
                 return true;
             }
@@ -77,12 +76,11 @@ public class SignBlocker extends SymbolBlocker {
         return false;
     }
 
-    private boolean checkPatternBlock(SignChangeEvent e, Player p, String combined, SymbolGroup group) {
-        for (Pattern pattern : group.patternsToBlock()) {
+    private boolean checkPatternBlock(SignChangeEvent e, Player p, String combined, Set<Pattern> patternsToBlock, List<Action> actions) {
+        for (Pattern pattern : patternsToBlock) {
             Matcher matcher = pattern.matcher(combined.replace("\n", ""));
             if (matcher.find()) {
                 Utils.printDebug("Sign message '" + combined + "' contains blocked symbol" + matcher.group() + ". (Patten)", Utils.DEBUG_SYMBOLS);
-                List<Action> actions = group.actionsToExecute();
                 super.executeActions(e, p, combined, matcher.group(), actions);
                 return true;
             }
