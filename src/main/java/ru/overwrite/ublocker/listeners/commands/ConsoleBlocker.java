@@ -63,21 +63,18 @@ public class ConsoleBlocker implements Listener {
     }
 
     private boolean checkStringBlock(ServerCommandEvent e, String command, CommandGroup group) {
-        String executedCommandBase = Utils.cutCommand(command).toLowerCase();
+        String executedCommandBase = Utils.cutCommand(command);
         for (String com : group.commandsToBlockString()) {
             Command comInMap = group.blockAliases() ? Bukkit.getCommandMap().getCommand(com.substring(1)) : null;
             List<String> aliases = comInMap != null ? comInMap.getAliases() : List.of();
             if (!aliases.isEmpty() && !aliases.contains(comInMap.getName())) {
                 aliases.add(comInMap.getName());
             }
-            String baseCommand = !executedCommandBase.isEmpty() && executedCommandBase.charAt(0) == '/'
-                    ? executedCommandBase.substring(1)
-                    : executedCommandBase;
 
-            boolean check = com.equalsIgnoreCase(baseCommand) || aliases.contains(baseCommand);
+            boolean check = com.equalsIgnoreCase(executedCommandBase) || aliases.contains(executedCommandBase);
             check = group.whitelistMode() != check;
             if (check) {
-                executeActions(e, command, baseCommand, group.actionsToExecute());
+                executeActions(e, command, executedCommandBase, group.actionsToExecute());
                 return true;
             }
         }
@@ -85,7 +82,7 @@ public class ConsoleBlocker implements Listener {
     }
 
     private boolean checkPatternBlock(ServerCommandEvent e, String command, CommandGroup group) {
-        String executedCommandBase = Utils.cutCommand(command).substring(1);
+        String executedCommandBase = Utils.cutCommand(command);
         for (Pattern pattern : group.commandsToBlockPattern()) {
             Matcher matcher = pattern.matcher(executedCommandBase);
             boolean check = matcher.matches();

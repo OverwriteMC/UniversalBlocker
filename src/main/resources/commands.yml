@@ -52,12 +52,12 @@ commands:
     block_aliases: true
     # Режим вайтлиста. Будет не запрещать команды из листа, а разрешать их, блокируя остальные
     whitelist_mode: false
-    # Список заблокированных команд
+    # Список заблокированных команд (указывать БЕЗ '/')
     commands:
-      - '/op'
-      - '/lp'
-      - '/packet'
-      - '/?'
+      - 'op'
+      - 'lp'
+      - 'packet'
+      - '?'
     # Действия при написании указанных команд
     actions:
       - '[LITE_HIDE] perm={ublocker.bypass.commands1}'
@@ -71,8 +71,8 @@ commands:
   regex_example:
     mode: 'PATTERN'
     commands:
-      - '/pl(ugins)?'
-      - '/ver(sion)?'
+      - 'pl(ugins)?'
+      - 'ver(sion)?'
     actions:
       - '[BLOCK_TAB_COMPLETE]'
       - '[BLOCK]'

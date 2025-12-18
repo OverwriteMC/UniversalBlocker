@@ -67,13 +67,14 @@ public class TabComplete implements Listener {
         if (!shouldBlockTabComplete(p, group.actionsToExecute())) {
             return;
         }
-        for (String command : group.commandsToBlockString()) {
-            Command comInMap = group.blockAliases() ? Bukkit.getCommandMap().getCommand(buffer.substring(1)) : null;
+        String executedCommandBase = Utils.cutCommand(buffer).substring(1);
+        for (String com : group.commandsToBlockString()) {
+            Command comInMap = group.blockAliases() ? Bukkit.getCommandMap().getCommand(executedCommandBase) : null;
             List<String> aliases = comInMap != null ? comInMap.getAliases() : List.of();
             if (!aliases.isEmpty() && !aliases.contains(comInMap.getName())) {
                 aliases.add(comInMap.getName());
             }
-            boolean check = buffer.equalsIgnoreCase(command + " ") || aliases.contains(buffer);
+            boolean check = executedCommandBase.equalsIgnoreCase(com) || aliases.contains(executedCommandBase);
             check = group.whitelistMode() != check;
             if (check) {
                 e.setCancelled(true);

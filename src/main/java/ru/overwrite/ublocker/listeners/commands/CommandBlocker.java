@@ -89,14 +89,14 @@ public class CommandBlocker implements Listener {
     }
 
     private boolean checkStringBlock(PlayerCommandPreprocessEvent e, Player p, String command, CommandGroup group) {
-        String executedCommandBase = Utils.cutCommand(command);
+        String executedCommandBase = Utils.cutCommand(command).substring(1);
         for (String com : group.commandsToBlockString()) {
-            Command comInMap = group.blockAliases() ? Bukkit.getCommandMap().getCommand(com.substring(1)) : null;
+            Command comInMap = group.blockAliases() ? Bukkit.getCommandMap().getCommand(com) : null;
             List<String> aliases = comInMap != null ? comInMap.getAliases() : List.of();
             if (!aliases.isEmpty() && !aliases.contains(comInMap.getName())) {
                 aliases.add(comInMap.getName());
             }
-            boolean check = executedCommandBase.equalsIgnoreCase(com) || aliases.contains(executedCommandBase.substring(1));
+            boolean check = executedCommandBase.equalsIgnoreCase(com) || aliases.contains(executedCommandBase);
             check = group.whitelistMode() != check;
             if (check) {
                 List<Action> actions = group.actionsToExecute();
