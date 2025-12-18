@@ -79,7 +79,7 @@ public class CommandBlocker implements Listener {
                     break;
                 }
                 case PATTERN: {
-                    if (checkPatternGroup(e, p, command, group)) {
+                    if (checkPatternBlock(e, p, command, group)) {
                         break outer;
                     }
                     break;
@@ -89,14 +89,16 @@ public class CommandBlocker implements Listener {
     }
 
     private boolean checkStringBlock(PlayerCommandPreprocessEvent e, Player p, String command, CommandGroup group) {
+        String executedCommandBase = Utils.cutCommand(command);
         for (String com : group.commandsToBlockString()) {
-            Command comInMap = Bukkit.getCommandMap().getCommand(com.replace("/", ""));
-            List<String> aliases = comInMap == null ? List.of() : comInMap.getAliases();
+            Command comInMap = group.blockAliases() ? Bukkit.getCommandMap().getCommand(com.substring(1)) : null;
+            List<String> aliases = comInMap != null ? comInMap.getAliases() : List.of();
             if (!aliases.isEmpty() && !aliases.contains(comInMap.getName())) {
                 aliases.add(comInMap.getName());
             }
-            String executedCommandBase = Utils.cutCommand(command);
-            if (executedCommandBase.equalsIgnoreCase(com) || aliases.contains(executedCommandBase.substring(1))) {
+            boolean check = executedCommandBase.equalsIgnoreCase(com) || aliases.contains(executedCommandBase.substring(1));
+            check = group.whitelistMode() != check;
+            if (check) {
                 List<Action> actions = group.actionsToExecute();
                 executeActions(e, p, com, command, actions);
                 return true;
@@ -105,21 +107,14 @@ public class CommandBlocker implements Listener {
         return false;
     }
 
-    private boolean checkPatternGroup(PlayerCommandPreprocessEvent e, Player p, String command, CommandGroup group) {
+    private boolean checkPatternBlock(PlayerCommandPreprocessEvent e, Player p, String command, CommandGroup group) {
+        String executedCommandBase = Utils.cutCommand(command).substring(1);
         for (Pattern pattern : group.commandsToBlockPattern()) {
-            String executedCommandBase = Utils.cutCommand(command);
-            Matcher matcher = pattern.matcher(executedCommandBase.replace("/", ""));
-            if (matcher.matches()) {
-                Command comInMap = Bukkit.getCommandMap().getCommand(matcher.group());
-                List<String> aliases = comInMap == null ? List.of() : comInMap.getAliases();
-                if (!aliases.isEmpty()) {
-                    aliases.add(comInMap.getName());
-                }
+            Matcher matcher = pattern.matcher(executedCommandBase);
+            boolean check = matcher.matches();
+            check = group.whitelistMode() != check;
+            if (check) {
                 List<Action> actions = group.actionsToExecute();
-                if (aliases.contains(matcher.group())) {
-                    executeActions(e, p, matcher.group(), command, actions);
-                    return true;
-                }
                 executeActions(e, p, matcher.group(), command, actions);
                 return true;
             }

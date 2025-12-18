@@ -13,7 +13,6 @@ import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import ru.overwrite.ublocker.UniversalBlocker;
 import ru.overwrite.ublocker.actions.Action;
-import ru.overwrite.ublocker.actions.ActionType;
 import ru.overwrite.ublocker.blockgroups.BlockFactor;
 import ru.overwrite.ublocker.blockgroups.BlockType;
 import ru.overwrite.ublocker.blockgroups.CommandGroup;
@@ -44,8 +43,6 @@ public class Config {
     private Set<CommandGroup> commandBlockGroupSet;
 
     private Set<SymbolGroup> symbolBlockGroupSet;
-
-    private Set<CommandGroup> commandHideGroupSet;
 
     private Set<String> excludedPlayers;
 
@@ -340,11 +337,11 @@ public class Config {
         final FileConfiguration commands = getFile(path, "commands.yml");
         Set<String> keys = commands.getConfigurationSection("commands").getKeys(false);
         ImmutableSet.Builder<CommandGroup> commandBlockGroupSetBuilder = ImmutableSet.builderWithExpectedSize(keys.size());
-        ImmutableSet.Builder<CommandGroup> commandHideGroupSetBuilder = ImmutableSet.builderWithExpectedSize(keys.size());
         for (String commandsID : keys) {
             final ConfigurationSection section = commands.getConfigurationSection("commands." + commandsID);
             BlockType blockType = BlockType.valueOf(section.getString("mode").toUpperCase());
             boolean blockAliases = section.getBoolean("block_aliases") && blockType.isString(); // Не будет работать с паттернами
+            boolean whitelistMode = section.getBoolean("whitelist_mode");
             List<Condition> conditionList = getConditionList(section.getStringList("conditions"));
             List<Action> actionList = getActionList(section.getStringList("actions"));
             commandBlockGroupSetBuilder.add(
@@ -352,6 +349,7 @@ public class Config {
                             commandsID,
                             blockType,
                             blockAliases,
+                            whitelistMode,
                             section.getStringList("commands"),
                             conditionList,
                             actionList
@@ -360,33 +358,8 @@ public class Config {
             if (blockType != BlockType.STRING) {
                 break;
             }
-            boolean shouldAddToHideList = false;
-            for (Action action : actionList) {
-                if (action.type() == ActionType.HIDE || action.type() == ActionType.LITE_HIDE) {
-                    shouldAddToHideList = true;
-                    break;
-                }
-            }
-            if (shouldAddToHideList) {
-                List<String> commandList = new ObjectArrayList<>();
-                for (String command : section.getStringList("commands")) {
-                    String newCmd = command.replace("/", "");
-                    commandList.add(newCmd);
-                }
-                commandHideGroupSetBuilder.add(
-                        new CommandGroup(
-                                commandsID,
-                                blockType,
-                                blockAliases,
-                                commandList,
-                                conditionList,
-                                actionList
-                        )
-                );
-            }
         }
         this.commandBlockGroupSet = commandBlockGroupSetBuilder.build();
-        this.commandHideGroupSet = commandHideGroupSetBuilder.build();
     }
 
     public void setupSymbols(String path) {
@@ -478,7 +451,7 @@ public class Config {
     }
 
     public void setupExcluded(FileConfiguration config) {
-        excludedPlayers = config.getConfigurationSection("main_settings").getBoolean("enable_excluded_players", false)
+        excludedPlayers = config.getConfigurationSection("settings").getBoolean("enable_excluded_players", false)
                 ? ImmutableSet.copyOf(config.getStringList("excluded_players"))
                 : Set.of();
     }

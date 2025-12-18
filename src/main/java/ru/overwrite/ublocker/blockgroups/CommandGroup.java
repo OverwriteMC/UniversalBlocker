@@ -11,6 +11,7 @@ public record CommandGroup(
         String groupId,
         BlockType blockType,
         boolean blockAliases,
+        boolean whitelistMode,
         Set<String> commandsToBlockString,
         Set<Pattern> commandsToBlockPattern,
         List<Condition> conditionsToCheck,
@@ -20,6 +21,7 @@ public record CommandGroup(
     public CommandGroup(String groupId,
                         BlockType blockType,
                         boolean blockAliases,
+                        boolean whitelistMode,
                         List<String> commandsToBlock,
                         List<Condition> conditionsToCheck,
                         List<Action> actionsToExecute) {
@@ -27,6 +29,7 @@ public record CommandGroup(
                 groupId,
                 blockType,
                 blockAliases,
+                whitelistMode,
                 blockType.isString() ? GroupUtils.createStringSet(commandsToBlock) : null,
                 blockType.isPattern() ? GroupUtils.createPatternSet(commandsToBlock) : null,
                 conditionsToCheck,

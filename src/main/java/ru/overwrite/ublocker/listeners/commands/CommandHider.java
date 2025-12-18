@@ -31,12 +31,15 @@ public class CommandHider implements Listener {
             return;
         }
         e.getCommands().removeIf(command -> {
-            for (CommandGroup group : pluginConfig.getCommandHideGroupSet()) {
+            for (CommandGroup group : pluginConfig.getCommandBlockGroupSet()) {
                 List<Action> actions = group.actionsToExecute();
                 if (actions.isEmpty()) {
                     continue;
                 }
-                if (checkStringBlock(p, command, group)) {
+                if (!shouldHideCommand(p, actions)) {
+                    continue;
+                }
+                if (checkStringBlock(command, group)) {
                     return true;
                 }
             }
@@ -44,16 +47,17 @@ public class CommandHider implements Listener {
         });
     }
 
-    private boolean checkStringBlock(Player p, String command, CommandGroup group) {
+    private boolean checkStringBlock(String command, CommandGroup group) {
         for (String com : group.commandsToBlockString()) {
-            Command comInMap = Bukkit.getCommandMap().getCommand(com);
-            List<String> aliases = comInMap == null ? List.of() : comInMap.getAliases();
+            Command comInMap = group.blockAliases() ? Bukkit.getCommandMap().getCommand(com.substring(1)) : null;
+            List<String> aliases = comInMap != null ? comInMap.getAliases() : List.of();
             if (!aliases.isEmpty() && !aliases.contains(comInMap.getName())) {
                 aliases.add(comInMap.getName());
             }
-            if (command.equalsIgnoreCase(com) || aliases.contains(command)) {
-                List<Action> actions = group.actionsToExecute();
-                return shouldHideCommand(p, actions);
+            boolean check = command.equalsIgnoreCase(com) || aliases.contains(command);
+            check = group.whitelistMode() != check;
+            if (check) {
+                return true;
             }
         }
         return false;

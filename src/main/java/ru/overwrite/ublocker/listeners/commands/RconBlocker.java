@@ -63,43 +63,36 @@ public class RconBlocker implements Listener {
     }
 
     private boolean checkStringBlock(RemoteServerCommandEvent e, String command, CommandGroup group) {
+        String executedCommandBase = Utils.cutCommand(command);
         for (String com : group.commandsToBlockString()) {
-            Command comInMap = Bukkit.getCommandMap().getCommand(com.replace("/", ""));
-            List<String> aliases = comInMap == null ? List.of() : comInMap.getAliases();
+            Command comInMap = group.blockAliases() ? Bukkit.getCommandMap().getCommand(com.substring(1)) : null;
+            List<String> aliases = comInMap != null ? comInMap.getAliases() : List.of();
             if (!aliases.isEmpty() && !aliases.contains(comInMap.getName())) {
                 aliases.add(comInMap.getName());
             }
-            String executedCommandBase = Utils.cutCommand(command).toLowerCase();
             String baseCommand = !executedCommandBase.isEmpty() && executedCommandBase.charAt(0) == '/'
                     ? executedCommandBase.substring(1)
                     : executedCommandBase;
 
-            if (com.equalsIgnoreCase(baseCommand) || aliases.contains(baseCommand)) {
-                List<Action> actions = group.actionsToExecute();
-                if (executeActions(e, command, baseCommand, actions)) {
-                    return true;
-                }
+            boolean check = com.equalsIgnoreCase(baseCommand) || aliases.contains(baseCommand);
+            check = group.whitelistMode() != check;
+            if (check) {
+                executeActions(e, command, baseCommand, group.actionsToExecute());
+                return true;
             }
         }
         return false;
     }
 
     private boolean checkPatternBlock(RemoteServerCommandEvent e, String command, CommandGroup group) {
+        String executedCommandBase = Utils.cutCommand(command).substring(1);
         for (Pattern pattern : group.commandsToBlockPattern()) {
-            String baseCommand = Utils.cutCommand(command).replace("/", "");
-            Matcher matcher = pattern.matcher(baseCommand);
-            if (matcher.matches()) {
-                Command comInMap = Bukkit.getCommandMap().getCommand(matcher.group());
-                List<String> aliases = comInMap == null ? List.of() : comInMap.getAliases();
-                if (!aliases.isEmpty()) {
-                    aliases.add(comInMap.getName());
-                }
-                if (aliases.contains(matcher.group())) {
-                    List<Action> actions = group.actionsToExecute();
-                    if (executeActions(e, command, matcher.group(), actions)) {
-                        return true;
-                    }
-                }
+            Matcher matcher = pattern.matcher(executedCommandBase);
+            boolean check = matcher.matches();
+            check = group.whitelistMode() != check;
+            if (check) {
+                executeActions(e, command, matcher.group(), group.actionsToExecute());
+                return true;
             }
         }
         return false;
