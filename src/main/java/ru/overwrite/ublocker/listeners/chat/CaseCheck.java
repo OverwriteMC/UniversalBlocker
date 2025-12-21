@@ -10,7 +10,7 @@ import ru.overwrite.ublocker.utils.Utils;
 
 public class CaseCheck extends ChatListener {
 
-    private final String[] searchList = {"%player%", "%limit%", "%msg%"};
+    private static final String[] searchList = {"%player%", "%limit%", "%msg%"};
 
     public CaseCheck(UniversalBlocker plugin) {
         super(plugin);

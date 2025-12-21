@@ -13,7 +13,7 @@ import java.util.regex.Pattern;
 
 public class NumbersCheck extends ChatListener {
 
-    private final String[] searchList = {"%player%", "%limit%", "%msg%"};
+    private static final String[] searchList = {"%player%", "%limit%", "%msg%"};
 
     public NumbersCheck(UniversalBlocker plugin) {
         super(plugin);

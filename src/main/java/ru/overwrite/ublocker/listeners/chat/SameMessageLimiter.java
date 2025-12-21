@@ -15,7 +15,7 @@ import ru.overwrite.ublocker.utils.Utils;
 public class SameMessageLimiter extends ChatListener {
 
     private final Reference2ObjectMap<String, Buffer> sent = new Reference2ObjectOpenHashMap<>();
-    private final String[] searchList = {"%player%", "%msg%"};
+    private static final String[] searchList = {"%player%", "%msg%"};
 
     public SameMessageLimiter(UniversalBlocker plugin) {
         super(plugin);

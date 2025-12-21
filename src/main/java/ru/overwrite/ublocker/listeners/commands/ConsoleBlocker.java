@@ -95,7 +95,7 @@ public class ConsoleBlocker implements Listener {
         return false;
     }
 
-    private final String[] searchList = {"%player%", "%command%", "%msg%"};
+    private static final String[] searchList = {"%player%", "%command%", "%msg%"};
 
     public void executeActions(Cancellable e, String fullCommand, String baseCommand, List<Action> actions) {
         Utils.printDebug("Starting executing actions for rcon and blocked command '" + baseCommand + "'", Utils.DEBUG_COMMANDS);

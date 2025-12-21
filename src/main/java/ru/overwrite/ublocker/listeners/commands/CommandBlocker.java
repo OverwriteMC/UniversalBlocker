@@ -122,7 +122,7 @@ public class CommandBlocker implements Listener {
         return false;
     }
 
-    private final String[] searchList = {"%player%", "%world%", "%cmd%", "%fullcmd%"};
+    private static final String[] searchList = {"%player%", "%world%", "%cmd%", "%fullcmd%"};
 
     public void executeActions(Cancellable e, Player p, String com, String command, List<Action> actions) {
         Utils.printDebug("Starting executing actions for player '" + p.getName() + "' and command '" + command + "'", Utils.DEBUG_COMMANDS);

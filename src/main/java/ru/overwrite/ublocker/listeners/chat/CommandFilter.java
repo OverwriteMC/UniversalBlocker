@@ -12,7 +12,7 @@ import java.util.function.Predicate;
 
 public class CommandFilter extends ChatListener {
 
-    private final String[] searchList = {"%player%", "%symbol%", "%msg%"};
+    private static final String[] searchList = {"%player%", "%symbol%", "%msg%"};
 
     public CommandFilter(UniversalBlocker plugin) {
         super(plugin);

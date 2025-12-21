@@ -13,7 +13,7 @@ import java.util.regex.Pattern;
 
 public class BanWords extends ChatListener {
 
-    private final String[] searchList = {"%player%", "%word%", "%msg%"};
+    private static final String[] searchList = {"%player%", "%word%", "%msg%"};
 
     public BanWords(UniversalBlocker plugin) {
         super(plugin);

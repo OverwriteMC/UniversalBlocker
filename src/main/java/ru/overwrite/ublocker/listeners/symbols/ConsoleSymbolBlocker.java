@@ -91,7 +91,7 @@ public class ConsoleSymbolBlocker implements Listener {
         return false;
     }
 
-    private final String[] searchList = {"%player%", "%symbol%", "%msg%"};
+    private static final String[] searchList = {"%player%", "%symbol%", "%msg%"};
 
     public void executeActions(Cancellable e, String command, String symbol, List<Action> actions) {
         Utils.printDebug("Starting executing actions for rcon and blocked symbol '" + symbol + "' (COMMAND)", Utils.DEBUG_SYMBOLS);
