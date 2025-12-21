@@ -39,8 +39,8 @@ public class ConsoleBlocker implements Listener {
         String command = e.getCommand().toLowerCase();
         outer:
         for (CommandGroup group : pluginConfig.getCommandBlockGroupSet()) {
-            Utils.printDebug("Group checking now: " + group.groupId(), Utils.DEBUG_COMMANDS);
-            Utils.printDebug("Block type: " + group.blockType(), Utils.DEBUG_COMMANDS);
+            Utils.printDebug(() -> "Group checking now: " + group.groupId(), Utils.DEBUG_COMMANDS);
+            Utils.printDebug(() -> "Block type: " + group.blockType(), Utils.DEBUG_COMMANDS);
             List<Action> actions = group.actionsToExecute();
             if (actions.isEmpty()) {
                 continue;
@@ -98,14 +98,14 @@ public class ConsoleBlocker implements Listener {
     private static final String[] searchList = {"%player%", "%command%", "%msg%"};
 
     public void executeActions(Cancellable e, String fullCommand, String baseCommand, List<Action> actions) {
-        Utils.printDebug("Starting executing actions for rcon and blocked command '" + baseCommand + "'", Utils.DEBUG_COMMANDS);
+        Utils.printDebug(() -> "Starting executing actions for rcon and blocked command '" + baseCommand + "'", Utils.DEBUG_COMMANDS);
         final String[] replacementList = {"CONSOLE", baseCommand, fullCommand};
 
         for (Action action : actions) {
             ActionType type = action.type();
 
             if (type == ActionType.BLOCK_CONSOLE) {
-                Utils.printDebug("Command event blocked for rcon", Utils.DEBUG_COMMANDS);
+                Utils.printDebug(() -> "Command event blocked for rcon", Utils.DEBUG_COMMANDS);
                 e.setCancelled(true);
             }
 

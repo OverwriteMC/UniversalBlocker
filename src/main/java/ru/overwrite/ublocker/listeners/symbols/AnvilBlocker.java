@@ -39,9 +39,9 @@ public class AnvilBlocker extends SymbolBlocker {
         String name = resultItem.getItemMeta().getDisplayName();
         outer:
         for (SymbolGroup group : pluginConfig.getSymbolBlockGroupSet()) {
-            Utils.printDebug("Group checking now: " + group.groupId(), Utils.DEBUG_SYMBOLS);
+            Utils.printDebug(() -> "Group checking now: " + group.groupId(), Utils.DEBUG_SYMBOLS);
             if (group.blockFactor().isEmpty() || !group.blockFactor().contains(BlockFactor.ANVIL)) {
-                Utils.printDebug("Group " + group.groupId() + " does not have 'anvil' block factor. Skipping...", Utils.DEBUG_SYMBOLS);
+                Utils.printDebug(() -> "Group " + group.groupId() + " does not have 'anvil' block factor. Skipping...", Utils.DEBUG_SYMBOLS);
                 continue;
             }
             List<Action> actions = group.actionsToExecute();
@@ -49,7 +49,7 @@ public class AnvilBlocker extends SymbolBlocker {
                 continue;
             }
             if (!ConditionChecker.isMeetsRequirements(p, group.conditionsToCheck())) {
-                Utils.printDebug("Blocking does not fulfill the requirements. Skipping group...", Utils.DEBUG_SYMBOLS);
+                Utils.printDebug(() -> "Blocking does not fulfill the requirements. Skipping group...", Utils.DEBUG_SYMBOLS);
                 continue;
             }
             switch (group.blockType()) {
@@ -72,7 +72,7 @@ public class AnvilBlocker extends SymbolBlocker {
     private boolean checkStringBlock(InventoryClickEvent e, Player p, String name, Set<String> symbolsToBlock, List<Action> actions) {
         for (String symbol : symbolsToBlock) {
             if (name.contains(symbol)) {
-                Utils.printDebug("Item name '" + name + "' contains blocked symbol" + symbol + ". (String)", Utils.DEBUG_SYMBOLS);
+                Utils.printDebug(() -> "Item name '" + name + "' contains blocked symbol" + symbol + ". (String)", Utils.DEBUG_SYMBOLS);
                 super.executeActions(e, p, name, symbol, actions);
                 return true;
             }
@@ -84,7 +84,7 @@ public class AnvilBlocker extends SymbolBlocker {
         for (Pattern pattern : patternsToBlock) {
             Matcher matcher = pattern.matcher(name);
             if (matcher.find()) {
-                Utils.printDebug("Item name '" + name + "' contains blocked symbol" + matcher.group() + ". (Pattern)", Utils.DEBUG_SYMBOLS);
+                Utils.printDebug(() -> "Item name '" + name + "' contains blocked symbol" + matcher.group() + ". (Pattern)", Utils.DEBUG_SYMBOLS);
                 super.executeActions(e, p, name, matcher.group(), actions);
                 return true;
             }

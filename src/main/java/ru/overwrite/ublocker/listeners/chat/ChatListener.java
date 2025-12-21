@@ -34,7 +34,7 @@ public abstract class ChatListener implements Listener {
     }
 
     public void executeActions(Player p, String[] searchList, String[] replacementList, List<Action> actions) {
-        Utils.printDebug("Starting executing actions for player '" + p.getName() + "'", Utils.DEBUG_CHAT);
+        Utils.printDebug(() -> "Starting executing actions for player '" + p.getName() + "'", Utils.DEBUG_CHAT);
 
         for (Action action : actions) {
             ActionType type = action.type();

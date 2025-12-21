@@ -60,7 +60,7 @@ public class BanWords extends ChatListener {
             super.executeActions(p, searchList, replacementList, banWordsSettings.actionsToExecute());
             return;
         }
-        Utils.printDebug("Censored word " + banword, Utils.DEBUG_CHAT);
+        Utils.printDebug(() -> "Censored word " + banword, Utils.DEBUG_CHAT);
         String censored = banWordsSettings.censorSymbol().repeat(banword.length());
         e.setMessage(message.replace(banword, censored));
     }

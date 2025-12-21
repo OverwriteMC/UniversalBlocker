@@ -60,9 +60,9 @@ public class SameMessageLimiter extends ChatListener {
 
             if (similarity >= sameMessagesSettings.samePercents()
                     && ++same >= sameMessagesSettings.maxSameMessage()) {
-                Utils.printDebug("Blocked message: " + message, Utils.DEBUG_CHAT);
-                Utils.printDebug("Old message: " + oldMessage, Utils.DEBUG_CHAT);
-                Utils.printDebug("Similarity: " + similarity, Utils.DEBUG_CHAT);
+                Utils.printDebug(() -> "Blocked message: " + message, Utils.DEBUG_CHAT);
+                Utils.printDebug(() -> "Old message: " + oldMessage, Utils.DEBUG_CHAT);
+                Utils.printDebug(() -> "Similarity: " + similarity, Utils.DEBUG_CHAT);
                 return true;
             }
         }

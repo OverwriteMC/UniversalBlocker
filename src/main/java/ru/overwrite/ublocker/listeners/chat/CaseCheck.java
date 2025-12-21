@@ -32,7 +32,7 @@ public class CaseCheck extends ChatListener {
                 super.executeActions(p, searchList, replacementList, caseCheckSettings.actionsToExecute());
                 return;
             }
-            Utils.printDebug("Moving message to lower case: " + message, Utils.DEBUG_CHAT);
+            Utils.printDebug(() -> "Moving message to lower case: " + message, Utils.DEBUG_CHAT);
             e.setMessage(message.toLowerCase());
         }
     }

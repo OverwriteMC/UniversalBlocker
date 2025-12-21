@@ -31,14 +31,14 @@ public abstract class SymbolBlocker implements Listener {
     }
 
     protected void executeActions(Cancellable e, Player p, String fullString, String symbol, List<Action> actions) {
-        Utils.printDebug("Starting executing actions for player '" + p.getName() + "' and blocked symbol '" + symbol + "'", Utils.DEBUG_SYMBOLS);
+        Utils.printDebug(() -> "Starting executing actions for player '" + p.getName() + "' and blocked symbol '" + symbol + "'", Utils.DEBUG_SYMBOLS);
         final String[] replacementList = {p.getName(), p.getWorld().getName(), fullString, symbol};
 
         for (Action action : actions) {
             ActionType type = action.type();
 
             if (shouldBlockAction(type, p, action)) {
-                Utils.printDebug("Event blocked for player '" + p.getName() + "'", Utils.DEBUG_SYMBOLS);
+                Utils.printDebug(() -> "Event blocked for player '" + p.getName() + "'", Utils.DEBUG_SYMBOLS);
                 e.setCancelled(true);
                 continue;
             }

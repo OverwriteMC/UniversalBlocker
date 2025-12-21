@@ -21,6 +21,7 @@ import java.io.InputStreamReader;
 import java.net.URL;
 import java.util.Arrays;
 import java.util.function.Consumer;
+import java.util.function.Supplier;
 
 @UtilityClass
 public class Utils {
@@ -65,9 +66,9 @@ public class Utils {
     public boolean DEBUG_COMMANDS;
     public boolean DEBUG_SYMBOLS;
 
-    public void printDebug(String messgae, boolean shouldPrint) {
+    public void printDebug(Supplier<String> supplier, boolean shouldPrint) {
         if (shouldPrint) {
-            Bukkit.getConsoleSender().sendMessage("[UniversalBlocker-Debug] " + messgae);
+            Bukkit.getConsoleSender().sendMessage("[UniversalBlocker-Debug] " + supplier.get());
         }
     }
 

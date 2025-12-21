@@ -58,17 +58,17 @@ public class CommandBlocker implements Listener {
             plugin.getPluginLogger().warn("Player " + p.getName() + " tried to execute incorrect command: " + command);
             return;
         }
-        Utils.printDebug("Executed command: " + command, Utils.DEBUG_COMMANDS);
+        Utils.printDebug(() -> "Executed command: " + command, Utils.DEBUG_COMMANDS);
         outer:
         for (CommandGroup group : pluginConfig.getCommandBlockGroupSet()) {
-            Utils.printDebug("Group checking now: " + group.groupId(), Utils.DEBUG_COMMANDS);
-            Utils.printDebug("Block type: " + group.blockType(), Utils.DEBUG_COMMANDS);
+            Utils.printDebug(() -> "Group checking now: " + group.groupId(), Utils.DEBUG_COMMANDS);
+            Utils.printDebug(() -> "Block type: " + group.blockType(), Utils.DEBUG_COMMANDS);
             List<Action> actions = group.actionsToExecute();
             if (actions.isEmpty()) {
                 continue;
             }
             if (!ConditionChecker.isMeetsRequirements(p, group.conditionsToCheck())) {
-                Utils.printDebug("Blocking does not fulfill the requirements. Skipping group...", Utils.DEBUG_COMMANDS);
+                Utils.printDebug(() -> "Blocking does not fulfill the requirements. Skipping group...", Utils.DEBUG_COMMANDS);
                 continue;
             }
             switch (group.blockType()) {
@@ -125,14 +125,14 @@ public class CommandBlocker implements Listener {
     private static final String[] searchList = {"%player%", "%world%", "%cmd%", "%fullcmd%"};
 
     public void executeActions(Cancellable e, Player p, String com, String command, List<Action> actions) {
-        Utils.printDebug("Starting executing actions for player '" + p.getName() + "' and command '" + command + "'", Utils.DEBUG_COMMANDS);
+        Utils.printDebug(() -> "Starting executing actions for player '" + p.getName() + "' and command '" + command + "'", Utils.DEBUG_COMMANDS);
         final String[] replacementList = {p.getName(), p.getWorld().getName(), com, command};
 
         for (Action action : actions) {
             ActionType type = action.type();
 
             if (shouldBlockAction(type, p, action, command)) {
-                Utils.printDebug("Command event blocked for player '" + p.getName() + "'", Utils.DEBUG_SYMBOLS);
+                Utils.printDebug(() -> "Command event blocked for player '" + p.getName() + "'", Utils.DEBUG_SYMBOLS);
                 e.setCancelled(true);
                 continue;
             }

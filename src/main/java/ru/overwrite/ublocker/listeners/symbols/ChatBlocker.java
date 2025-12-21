@@ -31,9 +31,9 @@ public class ChatBlocker extends SymbolBlocker {
         String message = e.getMessage().toLowerCase();
         outer:
         for (SymbolGroup group : pluginConfig.getSymbolBlockGroupSet()) {
-            Utils.printDebug("Group checking now: " + group.groupId(), Utils.DEBUG_SYMBOLS);
+            Utils.printDebug(() -> "Group checking now: " + group.groupId(), Utils.DEBUG_SYMBOLS);
             if (group.blockFactor().isEmpty() || !group.blockFactor().contains(BlockFactor.CHAT)) {
-                Utils.printDebug("Group " + group.groupId() + " does not have 'chat' block factor. Skipping...", Utils.DEBUG_SYMBOLS);
+                Utils.printDebug(() -> "Group " + group.groupId() + " does not have 'chat' block factor. Skipping...", Utils.DEBUG_SYMBOLS);
                 continue;
             }
             List<Action> actions = group.actionsToExecute();
@@ -41,7 +41,7 @@ public class ChatBlocker extends SymbolBlocker {
                 continue;
             }
             if (!ConditionChecker.isMeetsRequirements(p, group.conditionsToCheck())) {
-                Utils.printDebug("Blocking does not fulfill the requirements. Skipping group...", Utils.DEBUG_SYMBOLS);
+                Utils.printDebug(() -> "Blocking does not fulfill the requirements. Skipping group...", Utils.DEBUG_SYMBOLS);
                 continue;
             }
             switch (group.blockType()) {
@@ -64,7 +64,7 @@ public class ChatBlocker extends SymbolBlocker {
     private boolean checkStringBlock(AsyncPlayerChatEvent e, Player p, String message, Set<String> symbolsToBlock, List<Action> actions) {
         for (String symbol : symbolsToBlock) {
             if (message.contains(symbol)) {
-                Utils.printDebug("Message '" + message + "' contains blocked symbol" + symbol + ". (String)", Utils.DEBUG_SYMBOLS);
+                Utils.printDebug(() -> "Message '" + message + "' contains blocked symbol" + symbol + ". (String)", Utils.DEBUG_SYMBOLS);
                 super.executeActions(e, p, message, symbol, actions);
                 return true;
             }
@@ -76,7 +76,7 @@ public class ChatBlocker extends SymbolBlocker {
         for (Pattern pattern : patternsToBlock) {
             Matcher matcher = pattern.matcher(message);
             if (matcher.find()) {
-                Utils.printDebug("Message '" + message + "' contains blocked symbol" + matcher.group() + ". (Pattern)", Utils.DEBUG_SYMBOLS);
+                Utils.printDebug(() -> "Message '" + message + "' contains blocked symbol" + matcher.group() + ". (Pattern)", Utils.DEBUG_SYMBOLS);
                 super.executeActions(e, p, message, matcher.group(), actions);
                 return true;
             }

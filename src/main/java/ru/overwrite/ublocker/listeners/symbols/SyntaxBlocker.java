@@ -33,9 +33,9 @@ public class SyntaxBlocker extends SymbolBlocker {
         }
         outer:
         for (SymbolGroup group : pluginConfig.getSymbolBlockGroupSet()) {
-            Utils.printDebug("Group checking now: " + group.groupId(), Utils.DEBUG_SYMBOLS);
+            Utils.printDebug(() -> "Group checking now: " + group.groupId(), Utils.DEBUG_SYMBOLS);
             if (group.blockFactor().isEmpty() || !group.blockFactor().contains(BlockFactor.COMMAND)) {
-                Utils.printDebug("Group " + group.groupId() + " does not have 'command' block factor. Skipping...", Utils.DEBUG_SYMBOLS);
+                Utils.printDebug(() -> "Group " + group.groupId() + " does not have 'command' block factor. Skipping...", Utils.DEBUG_SYMBOLS);
                 continue;
             }
             List<Action> actions = group.actionsToExecute();
@@ -43,7 +43,7 @@ public class SyntaxBlocker extends SymbolBlocker {
                 continue;
             }
             if (!ConditionChecker.isMeetsRequirements(p, group.conditionsToCheck())) {
-                Utils.printDebug("Blocking does not fulfill the requirements. Skipping group...", Utils.DEBUG_SYMBOLS);
+                Utils.printDebug(() -> "Blocking does not fulfill the requirements. Skipping group...", Utils.DEBUG_SYMBOLS);
                 continue;
             }
             switch (group.blockType()) {
@@ -69,7 +69,7 @@ public class SyntaxBlocker extends SymbolBlocker {
                 continue;
             }
             if (command.contains(symbol)) {
-                Utils.printDebug("Command '" + command + "' contains blocked symbol" + symbol + ". (String)", Utils.DEBUG_SYMBOLS);
+                Utils.printDebug(() -> "Command '" + command + "' contains blocked symbol" + symbol + ". (String)", Utils.DEBUG_SYMBOLS);
                 List<Action> actions = group.actionsToExecute();
                 super.executeActions(e, p, command, symbol, actions);
                 return true;
@@ -85,7 +85,7 @@ public class SyntaxBlocker extends SymbolBlocker {
                 continue;
             }
             if (matcher.find()) {
-                Utils.printDebug("Command '" + command + "' contains blocked symbol" + matcher.group() + ". (Pattern)", Utils.DEBUG_SYMBOLS);
+                Utils.printDebug(() -> "Command '" + command + "' contains blocked symbol" + matcher.group() + ". (Pattern)", Utils.DEBUG_SYMBOLS);
                 List<Action> actions = group.actionsToExecute();
                 super.executeActions(e, p, command, matcher.group(), actions);
                 return true;

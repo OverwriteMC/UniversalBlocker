@@ -34,9 +34,9 @@ public class RconSymbolBlocker implements Listener {
         String command = e.getCommand().toLowerCase();
         outer:
         for (SymbolGroup group : pluginConfig.getSymbolBlockGroupSet()) {
-            Utils.printDebug("Group checking now: " + group.groupId(), Utils.DEBUG_SYMBOLS);
+            Utils.printDebug(() -> "Group checking now: " + group.groupId(), Utils.DEBUG_SYMBOLS);
             if (group.blockFactor().isEmpty() || !group.blockFactor().contains(BlockFactor.RCON_COMMAND)) {
-                Utils.printDebug("Group " + group.groupId() + " does not have 'rcon_command' block factor. Skipping...", Utils.DEBUG_SYMBOLS);
+                Utils.printDebug(() -> "Group " + group.groupId() + " does not have 'rcon_command' block factor. Skipping...", Utils.DEBUG_SYMBOLS);
                 continue;
             }
             List<Action> actions = group.actionsToExecute();
@@ -66,7 +66,7 @@ public class RconSymbolBlocker implements Listener {
                 continue;
             }
             if (command.contains(symbol)) {
-                Utils.printDebug("Command '" + command + "' contains blocked symbol" + symbol + ". (String)", Utils.DEBUG_SYMBOLS);
+                Utils.printDebug(() -> "Command '" + command + "' contains blocked symbol" + symbol + ". (String)", Utils.DEBUG_SYMBOLS);
                 List<Action> actions = group.actionsToExecute();
                 executeActions(e, command, symbol, actions);
                 return true;
@@ -82,7 +82,7 @@ public class RconSymbolBlocker implements Listener {
                 continue;
             }
             if (matcher.find()) {
-                Utils.printDebug("Command '" + command + "' contains blocked symbol" + matcher.group() + ". (Pattern)", Utils.DEBUG_SYMBOLS);
+                Utils.printDebug(() -> "Command '" + command + "' contains blocked symbol" + matcher.group() + ". (Pattern)", Utils.DEBUG_SYMBOLS);
                 List<Action> actions = group.actionsToExecute();
                 executeActions(e, command, matcher.group(), actions);
                 return true;
@@ -94,14 +94,14 @@ public class RconSymbolBlocker implements Listener {
     private static final String[] searchList = {"%player%", "%symbol%", "%msg%"};
 
     public void executeActions(Cancellable e, String command, String symbol, List<Action> actions) {
-        Utils.printDebug("Starting executing actions for rcon and blocked symbol '" + symbol + "' (COMMAND)", Utils.DEBUG_SYMBOLS);
+        Utils.printDebug(() -> "Starting executing actions for rcon and blocked symbol '" + symbol + "' (COMMAND)", Utils.DEBUG_SYMBOLS);
         final String[] replacementList = {"RCON", symbol, command};
 
         for (Action action : actions) {
             ActionType type = action.type();
 
             if (shouldBlockAction(type)) {
-                Utils.printDebug("Command event blocked for rcon", Utils.DEBUG_SYMBOLS);
+                Utils.printDebug(() -> "Command event blocked for rcon", Utils.DEBUG_SYMBOLS);
                 e.setCancelled(true);
                 continue;
             }
