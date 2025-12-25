@@ -8,6 +8,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerCommandSendEvent;
 import ru.overwrite.ublocker.UniversalBlocker;
 import ru.overwrite.ublocker.actions.Action;
+import ru.overwrite.ublocker.blockgroups.BlockType;
 import ru.overwrite.ublocker.blockgroups.CommandGroup;
 import ru.overwrite.ublocker.configuration.Config;
 import ru.overwrite.ublocker.utils.Utils;
@@ -32,6 +33,9 @@ public class CommandHider implements Listener {
         }
         e.getCommands().removeIf(command -> {
             for (CommandGroup group : pluginConfig.getCommandBlockGroupSet()) {
+                if (group.blockType() == BlockType.PATTERN) {
+                    continue;
+                }
                 List<Action> actions = group.actionsToExecute();
                 if (actions.isEmpty()) {
                     continue;
