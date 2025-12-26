@@ -71,7 +71,7 @@ public class ConsoleBlocker implements Listener {
                 aliases.add(comInMap.getName());
             }
 
-            boolean check = com.equalsIgnoreCase(executedCommandBase) || aliases.contains(executedCommandBase);
+            boolean check = com.equalsIgnoreCase(executedCommandBase) || aliases.contains(com);
             check = group.whitelistMode() != check;
             if (check) {
                 executeActions(e, command, executedCommandBase, group.actionsToExecute());

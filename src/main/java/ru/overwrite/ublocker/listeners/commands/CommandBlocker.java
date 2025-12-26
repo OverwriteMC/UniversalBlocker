@@ -96,7 +96,7 @@ public class CommandBlocker implements Listener {
             if (!aliases.isEmpty() && !aliases.contains(comInMap.getName())) {
                 aliases.add(comInMap.getName());
             }
-            boolean check = executedCommandBase.equalsIgnoreCase(com) || aliases.contains(executedCommandBase);
+            boolean check = executedCommandBase.equalsIgnoreCase(com) || aliases.contains(com);
             check = group.whitelistMode() != check;
             if (check) {
                 List<Action> actions = group.actionsToExecute();
