@@ -80,18 +80,14 @@ public class TabComplete implements Listener {
             return false;
         }
         String executedCommandBase = Utils.cutCommand(buffer).substring(1);
+        Command comInMap = group.blockAliases() ? Bukkit.getCommandMap().getCommand(executedCommandBase) : null;
+        List<String> aliases = comInMap != null ? comInMap.getAliases() : List.of();
+        if (!aliases.isEmpty() && !aliases.contains(comInMap.getName())) {
+            aliases.add(comInMap.getName());
+        }
         for (String com : group.commandsToBlockString()) {
-            Utils.printDebug(() -> "executedCommandBase: " + executedCommandBase, Utils.DEBUG_COMMANDS);
-            Utils.printDebug(() -> "Checking command: " + com, Utils.DEBUG_COMMANDS);
-            Command comInMap = group.blockAliases() ? Bukkit.getCommandMap().getCommand(executedCommandBase) : null;
-            List<String> aliases = comInMap != null ? comInMap.getAliases() : List.of();
-            if (!aliases.isEmpty() && !aliases.contains(comInMap.getName())) {
-                aliases.add(comInMap.getName());
-            }
             boolean check = executedCommandBase.equalsIgnoreCase(com) || aliases.contains(com);
             check = group.whitelistMode() != check;
-            boolean finalCheck = check;
-            Utils.printDebug(() -> "Final check '" + finalCheck + "'", Utils.DEBUG_COMMANDS);
             if (check) {
                 Utils.printDebug(() -> "Tab complete blocked by string match for player '" + p.getName() + "'. Command: " + com, Utils.DEBUG_COMMANDS);
                 e.setCancelled(true);

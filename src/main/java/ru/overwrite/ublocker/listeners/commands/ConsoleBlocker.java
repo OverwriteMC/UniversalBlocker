@@ -64,13 +64,12 @@ public class ConsoleBlocker implements Listener {
 
     private boolean checkStringBlock(ServerCommandEvent e, String command, CommandGroup group) {
         String executedCommandBase = Utils.cutCommand(command);
+        Command comInMap = group.blockAliases() ? Bukkit.getCommandMap().getCommand(executedCommandBase) : null;
+        List<String> aliases = comInMap != null ? comInMap.getAliases() : List.of();
+        if (!aliases.isEmpty() && !aliases.contains(comInMap.getName())) {
+            aliases.add(comInMap.getName());
+        }
         for (String com : group.commandsToBlockString()) {
-            Command comInMap = group.blockAliases() ? Bukkit.getCommandMap().getCommand(com.substring(1)) : null;
-            List<String> aliases = comInMap != null ? comInMap.getAliases() : List.of();
-            if (!aliases.isEmpty() && !aliases.contains(comInMap.getName())) {
-                aliases.add(comInMap.getName());
-            }
-
             boolean check = com.equalsIgnoreCase(executedCommandBase) || aliases.contains(com);
             check = group.whitelistMode() != check;
             if (check) {

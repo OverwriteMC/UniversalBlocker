@@ -90,15 +90,16 @@ public class CommandBlocker implements Listener {
 
     private boolean checkStringBlock(PlayerCommandPreprocessEvent e, Player p, String command, CommandGroup group) {
         String executedCommandBase = Utils.cutCommand(command).substring(1);
+        Command comInMap = group.blockAliases() ? Bukkit.getCommandMap().getCommand(executedCommandBase) : null;
+        List<String> aliases = comInMap != null ? comInMap.getAliases() : List.of();
+        if (!aliases.isEmpty() && !aliases.contains(comInMap.getName())) {
+            aliases.add(comInMap.getName());
+        }
         for (String com : group.commandsToBlockString()) {
-            Command comInMap = group.blockAliases() ? Bukkit.getCommandMap().getCommand(com) : null;
-            List<String> aliases = comInMap != null ? comInMap.getAliases() : List.of();
-            if (!aliases.isEmpty() && !aliases.contains(comInMap.getName())) {
-                aliases.add(comInMap.getName());
-            }
             boolean check = executedCommandBase.equalsIgnoreCase(com) || aliases.contains(com);
             check = group.whitelistMode() != check;
             if (check) {
+                Utils.printDebug(() -> "command execution blocked by string match for player '" + p.getName() + "'. Command: " + com, Utils.DEBUG_COMMANDS);
                 List<Action> actions = group.actionsToExecute();
                 executeActions(e, p, com, command, actions);
                 return true;
@@ -114,6 +115,7 @@ public class CommandBlocker implements Listener {
             boolean check = matcher.matches();
             check = group.whitelistMode() != check;
             if (check) {
+                Utils.printDebug(() -> "command execution blocked by pattern match for player '" + p.getName() + "'. Pattern: " + pattern.pattern(), Utils.DEBUG_COMMANDS);
                 List<Action> actions = group.actionsToExecute();
                 executeActions(e, p, matcher.group(), command, actions);
                 return true;

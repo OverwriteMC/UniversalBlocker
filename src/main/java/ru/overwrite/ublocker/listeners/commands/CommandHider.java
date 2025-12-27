@@ -52,13 +52,13 @@ public class CommandHider implements Listener {
     }
 
     private boolean checkStringBlock(String command, CommandGroup group) {
+        Command comInMap = group.blockAliases() ? Bukkit.getCommandMap().getCommand(command) : null;
+        List<String> aliases = comInMap != null ? comInMap.getAliases() : List.of();
+        if (!aliases.isEmpty() && !aliases.contains(comInMap.getName())) {
+            aliases.add(comInMap.getName());
+        }
         for (String com : group.commandsToBlockString()) {
-            Command comInMap = group.blockAliases() ? Bukkit.getCommandMap().getCommand(com) : null;
-            List<String> aliases = comInMap != null ? comInMap.getAliases() : List.of();
-            if (!aliases.isEmpty() && !aliases.contains(comInMap.getName())) {
-                aliases.add(comInMap.getName());
-            }
-            boolean check = command.equalsIgnoreCase(com) || aliases.contains(command);
+            boolean check = command.equalsIgnoreCase(com) || aliases.contains(com);
             check = group.whitelistMode() != check;
             if (check) {
                 return true;
