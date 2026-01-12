@@ -65,7 +65,7 @@ public class SyntaxBlocker extends SymbolBlocker {
 
     private boolean checkStringBlock(PlayerCommandPreprocessEvent e, Player p, String command, SymbolGroup group) {
         for (String symbol : group.symbolsToBlock()) {
-            if (startWithExcludedString(command, group.excludedCommandsString())) {
+            if (startWithExcludedString(Utils.cutCommand(command), group.excludedCommandsString())) {
                 continue;
             }
             if (command.contains(symbol)) {
@@ -80,10 +80,10 @@ public class SyntaxBlocker extends SymbolBlocker {
 
     private boolean checkPatternBlock(PlayerCommandPreprocessEvent e, Player p, String command, SymbolGroup group) {
         for (Pattern pattern : group.patternsToBlock()) {
-            Matcher matcher = pattern.matcher(command);
-            if (startWithExcludedPattern(command, group.excludedCommandsPattern())) {
+            if (startWithExcludedPattern(Utils.cutCommand(command), group.excludedCommandsPattern())) {
                 continue;
             }
+            Matcher matcher = pattern.matcher(command);
             if (matcher.find()) {
                 Utils.printDebug(() -> "Command '" + command + "' contains blocked symbol" + matcher.group() + ". (Pattern)", Utils.DEBUG_SYMBOLS);
                 List<Action> actions = group.actionsToExecute();
@@ -94,24 +94,24 @@ public class SyntaxBlocker extends SymbolBlocker {
         return false;
     }
 
-    private boolean startWithExcludedString(String command, List<String> excludedList) {
+    private boolean startWithExcludedString(String commandBase, List<String> excludedList) {
         if (excludedList.isEmpty()) {
             return false;
         }
         for (String excluded : excludedList) {
-            if (command.startsWith(excluded + " ")) {
+            if (commandBase.equalsIgnoreCase(excluded)) {
                 return true;
             }
         }
         return false;
     }
 
-    private boolean startWithExcludedPattern(String command, List<Pattern> excludedList) {
+    private boolean startWithExcludedPattern(String commandBase, List<Pattern> excludedList) {
         if (excludedList.isEmpty()) {
             return false;
         }
         for (Pattern excluded : excludedList) {
-            Matcher matcher = excluded.matcher(command);
+            Matcher matcher = excluded.matcher(commandBase);
             if (matcher.lookingAt()) {
                 return true;
             }
