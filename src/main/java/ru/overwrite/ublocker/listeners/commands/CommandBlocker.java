@@ -17,7 +17,7 @@ import ru.overwrite.ublocker.blockgroups.CommandGroup;
 import ru.overwrite.ublocker.color.ColorizerProvider;
 import ru.overwrite.ublocker.conditions.ConditionChecker;
 import ru.overwrite.ublocker.configuration.Config;
-import ru.overwrite.ublocker.task.Runner;
+import ru.overwrite.ublocker.task.runner.Runner;
 import ru.overwrite.ublocker.utils.Utils;
 
 import java.util.List;
