@@ -1,4 +1,4 @@
-# UniversalBlockerUltimate [![CodeFactor Grade](https://www.codefactor.io/repository/github/overwrite987/universalblocker/badge)](https://www.codefactor.io/repository/github/overwrite987/universalblocker)
+# UniversalBlockerUltimate [![CodeFactor Grade](https://www.codefactor.io/repository/github/overwritemc/universalblocker/badge)](https://www.codefactor.io/repository/github/overwrite987/universalblocker)
 
 ### Описание плагина:​
 Это плагин, предоставляющий администраторам безупречный контроль над чатом, командами и обменом сообщений между игроками. Плагин поддерживает разнообразные фильтры, включая ключевые слова и регулярные выражения, а также самую гибконастраиваемую систему блокировки команд, что позволит с легкостью настроить блокировки любых команд как вы того захотите.
