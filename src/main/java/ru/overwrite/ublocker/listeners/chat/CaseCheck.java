@@ -38,14 +38,15 @@ public class CaseCheck extends ChatListener {
     }
 
     private boolean checkCase(String message, double threshold) {
-        char[] chars = message.toCharArray();
         int uppercaseCount = 0;
-        for (char c : chars) {
+        int length = message.length();
+        for (int i = 0; i < length; ++i) {
+            char c = message.charAt(i);
             if (Character.isUpperCase(c)) {
                 uppercaseCount++;
             }
         }
-        double percentage = (double) uppercaseCount / chars.length * 100;
+        double percentage = (double) uppercaseCount / length * 100;
         return percentage > threshold;
     }
 }

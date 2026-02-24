@@ -53,7 +53,7 @@ public class CommandBlocker implements Listener {
             return;
         }
         // Дерьмо для фикса другого дерьма
-        if (command.length() >= 2 && command.charAt(1) == ' ' || hasTwoConsecutiveSpaces(command.toCharArray())) {
+        if (command.length() >= 2 && command.charAt(1) == ' ' || hasTwoConsecutiveSpaces(command)) {
             e.setCancelled(true);
             plugin.getPluginLogger().warn("Player " + p.getName() + " tried to execute incorrect command: " + command);
             return;
@@ -261,9 +261,9 @@ public class CommandBlocker implements Listener {
     }
 
     // В новых версиях нет нормализации пробелов на сервер сайде, таким образом игрок может спокойно обойти любые блокировки
-    private boolean hasTwoConsecutiveSpaces(char[] chars) {
-        for (int i = 0; i < chars.length - 1; i++) {
-            if (chars[i] == ' ' && chars[i + 1] == ' ') {
+    private boolean hasTwoConsecutiveSpaces(String str) {
+        for (int i = 0; i < str.length() - 1; i++) {
+            if (str.charAt(i) == ' ' && str.charAt(i + 1) == ' ') {
                 return true;
             }
         }

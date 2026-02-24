@@ -6,13 +6,13 @@
 
     <groupId>ru.overwrite.blocker</groupId>
     <artifactId>UniversalBlockerUltimate</artifactId>
-    <version>4.1.2</version>
+    <version>4.2.0</version>
     <packaging>jar</packaging>
 
     <name>UniversalBlockerUltimate</name>
 
     <properties>
-        <java.version>17</java.version>
+        <java.version>21</java.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
 

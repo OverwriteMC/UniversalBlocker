@@ -96,7 +96,7 @@ public class RconBlocker implements Listener {
 
     private static final String[] searchList = {"%player%", "%command%", "%msg%"};
 
-    public boolean executeActions(Cancellable e, String fullCommand, String baseCommand, List<Action> actions) {
+    public void executeActions(Cancellable e, String fullCommand, String baseCommand, List<Action> actions) {
         Utils.printDebug(() -> "Starting executing actions for rcon and blocked command '" + baseCommand + "'", Utils.DEBUG_COMMANDS);
         final String[] replacementList = {"RCON", baseCommand, fullCommand};
 
@@ -123,7 +123,7 @@ public class RconBlocker implements Listener {
                 }
             }
         }
-        return e.isCancelled();
+        e.isCancelled();
     }
 
     private void logAction(Action action, String[] replacementList) {

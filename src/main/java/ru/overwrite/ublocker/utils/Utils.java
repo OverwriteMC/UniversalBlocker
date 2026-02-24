@@ -187,9 +187,8 @@ public class Utils {
 
     private int findClosingBracket(String message, int startIndex) {
         int depth = 0;
-        char[] chars = message.toCharArray();
-        for (int i = startIndex; i < chars.length; i++) {
-            char currentChar = chars[i];
+        for (int i = startIndex, length = message.length(); i < length; ++i) {
+            char currentChar = message.charAt(i);
             if (currentChar == '{') {
                 depth++;
             } else if (currentChar == '}') {
@@ -246,9 +245,8 @@ public class Utils {
         ObjectList<String> parts = new ObjectArrayList<>();
         int start = 0;
         int depth = 0;
-        char[] chars = buttonContent.toCharArray();
-        for (int i = 0; i < chars.length; i++) {
-            char c = chars[i];
+        for (int i = 0, length = buttonContent.length(); i < length; ++i) {
+            char c = buttonContent.charAt(i);
             if (c == '{') {
                 depth++;
             } else if (c == '}') {
@@ -345,21 +343,6 @@ public class Utils {
         return writeIndex == chars.length ? text : new String(chars, 0, writeIndex);
     }
 
-    public final char COLOR_CHAR = '§';
-
-    public String translateAlternateColorCodes(char altColorChar, String textToTranslate) {
-        final char[] chars = textToTranslate.toCharArray();
-
-        for (int i = 0, length = chars.length - 1; i < length; i++) {
-            if (chars[i] == altColorChar && isValidColorCharacter(chars[i + 1])) {
-                chars[i++] = COLOR_CHAR;
-                chars[i] |= 0x20;
-            }
-        }
-
-        return new String(chars);
-    }
-
     private boolean isValidColorCharacter(char c) {
         return switch (c) {
             case '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'a', 'b', 'c', 'd', 'e', 'f', 'A', 'B', 'C', 'D',
@@ -384,8 +367,8 @@ public class Utils {
     }
 
     public Character getFirstBlockedChar(String str, CharSet charSet) {
-        char[] chars = str.toCharArray();
-        for (char c : chars) {
+        for (int i = 0, length = str.length(); i < length; ++i) {
+            char c = str.charAt(i);
             if (!charSet.contains(c)) {
                 return c;
             }
