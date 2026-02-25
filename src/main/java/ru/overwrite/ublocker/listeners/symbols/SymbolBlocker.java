@@ -98,7 +98,7 @@ public abstract class SymbolBlocker implements Listener {
     }
 
     private void executeConsoleCommand(Player p, Action action) {
-        Bukkit.dispatchCommand(Bukkit.getConsoleSender(), action.context().replace("%player%", p.getName()));
+        runner.run(() -> Bukkit.dispatchCommand(Bukkit.getConsoleSender(), action.context().replace("%player%", p.getName())));
     }
 
     private void logAction(Action action, String[] replacementList) {
