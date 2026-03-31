@@ -85,14 +85,21 @@ public class TabComplete implements Listener {
         if (!aliases.isEmpty() && !aliases.contains(comInMap.getName())) {
             aliases.add(comInMap.getName());
         }
+        boolean matched = false;
+        String matchedCommand = executedCommandBase;
         for (String com : group.commandsToBlockString()) {
-            boolean check = executedCommandBase.equalsIgnoreCase(com) || aliases.contains(com);
-            check = group.whitelistMode() != check;
-            if (check) {
-                Utils.printDebug(() -> "Tab complete blocked by string match for player '" + p.getName() + "'. Command: " + com, Utils.DEBUG_COMMANDS);
-                e.setCancelled(true);
-                return true;
+            if (executedCommandBase.equalsIgnoreCase(com) || aliases.contains(com)) {
+                matched = true;
+                matchedCommand = com;
+                break;
             }
+        }
+        boolean check = group.whitelistMode() != matched;
+        if (check) {
+            String finalMatchedCommand = matchedCommand;
+            Utils.printDebug(() -> "Tab complete blocked by string match for player '" + p.getName() + "'. Command: " + finalMatchedCommand, Utils.DEBUG_COMMANDS);
+            e.setCancelled(true);
+            return true;
         }
         return false;
     }
@@ -101,15 +108,21 @@ public class TabComplete implements Listener {
         if (!shouldBlockTabComplete(p, group.actionsToExecute())) {
             return false;
         }
+        Pattern matchedPattern = null;
         for (Pattern pattern : group.commandsToBlockPattern()) {
             Matcher matcher = pattern.matcher(buffer);
-            boolean check = matcher.matches();
-            check = group.whitelistMode() != check;
-            if (check) {
-                Utils.printDebug(() -> "Tab complete blocked by pattern match for player '" + p.getName() + "'. Pattern: " + pattern.pattern(), Utils.DEBUG_COMMANDS);
-                e.setCancelled(true);
-                return true;
+            if (matcher.matches()) {
+                matchedPattern = pattern;
+                break;
             }
+        }
+        boolean matched = matchedPattern != null;
+        boolean check = group.whitelistMode() != matched;
+        if (check) {
+            Pattern finalMatchedPattern = matchedPattern;
+            Utils.printDebug(() -> "Tab complete blocked by pattern match for player '" + p.getName() + "'. Pattern: " + (matched ? finalMatchedPattern.pattern() : "no match"), Utils.DEBUG_COMMANDS);
+            e.setCancelled(true);
+            return true;
         }
         return false;
     }

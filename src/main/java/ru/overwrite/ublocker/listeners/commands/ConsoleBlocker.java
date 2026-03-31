@@ -69,27 +69,36 @@ public class ConsoleBlocker implements Listener {
         if (!aliases.isEmpty() && !aliases.contains(comInMap.getName())) {
             aliases.add(comInMap.getName());
         }
+        boolean matched = false;
         for (String com : group.commandsToBlockString()) {
-            boolean check = com.equalsIgnoreCase(executedCommandBase) || aliases.contains(com);
-            check = group.whitelistMode() != check;
-            if (check) {
-                executeActions(e, command, executedCommandBase, group.actionsToExecute());
-                return true;
+            if (com.equalsIgnoreCase(executedCommandBase) || aliases.contains(com)) {
+                matched = true;
+                break;
             }
+        }
+        boolean check = group.whitelistMode() != matched;
+        if (check) {
+            executeActions(e, command, executedCommandBase, group.actionsToExecute());
+            return true;
         }
         return false;
     }
 
     private boolean checkPatternBlock(ServerCommandEvent e, String command, CommandGroup group) {
         String executedCommandBase = Utils.cutCommand(command);
+        Matcher matchedMatcher = null;
         for (Pattern pattern : group.commandsToBlockPattern()) {
             Matcher matcher = pattern.matcher(executedCommandBase);
-            boolean check = matcher.matches();
-            check = group.whitelistMode() != check;
-            if (check) {
-                executeActions(e, command, matcher.group(), group.actionsToExecute());
-                return true;
+            if (matcher.matches()) {
+                matchedMatcher = matcher;
+                break;
             }
+        }
+        boolean matched = matchedMatcher != null;
+        boolean check = group.whitelistMode() != matched;
+        if (check) {
+            executeActions(e, command, matched ? matchedMatcher.group() : executedCommandBase, group.actionsToExecute());
+            return true;
         }
         return false;
     }

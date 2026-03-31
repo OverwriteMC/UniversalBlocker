@@ -54,17 +54,14 @@ public class CommandHider implements Listener {
     private boolean checkStringBlock(String command, CommandGroup group) {
         Command comInMap = group.blockAliases() ? Bukkit.getCommandMap().getCommand(command) : null;
         List<String> aliases = comInMap != null ? comInMap.getAliases() : List.of();
-        if (!aliases.isEmpty() && !aliases.contains(comInMap.getName())) {
-            aliases.add(comInMap.getName());
-        }
+        boolean matched = false;
         for (String com : group.commandsToBlockString()) {
-            boolean check = command.equalsIgnoreCase(com) || aliases.contains(com);
-            check = group.whitelistMode() != check;
-            if (check) {
-                return true;
+            if (command.equalsIgnoreCase(com) || aliases.contains(com)) {
+                matched = true;
+                break;
             }
         }
-        return false;
+        return group.whitelistMode() != matched;
     }
 
     private boolean shouldHideCommand(Player p, List<Action> actions) {

@@ -95,31 +95,45 @@ public class CommandBlocker implements Listener {
         if (!aliases.isEmpty() && !aliases.contains(comInMap.getName())) {
             aliases.add(comInMap.getName());
         }
+        boolean matched = false;
+        String matchedCommand = executedCommandBase;
         for (String com : group.commandsToBlockString()) {
-            boolean check = executedCommandBase.equalsIgnoreCase(com) || aliases.contains(com);
-            check = group.whitelistMode() != check;
-            if (check) {
-                Utils.printDebug(() -> "command execution blocked by string match for player '" + p.getName() + "'. Command: " + com, Utils.DEBUG_COMMANDS);
-                List<Action> actions = group.actionsToExecute();
-                executeActions(e, p, com, command, actions);
-                return true;
+            if (executedCommandBase.equalsIgnoreCase(com) || aliases.contains(com)) {
+                matched = true;
+                matchedCommand = com;
+                break;
             }
+        }
+        boolean shouldBlock = group.whitelistMode() != matched;
+        if (shouldBlock) {
+            String finalMatchedCommand = matchedCommand;
+            Utils.printDebug(() -> "command execution blocked by string match for player '" + p.getName() + "'. Command: " + finalMatchedCommand, Utils.DEBUG_COMMANDS);
+            List<Action> actions = group.actionsToExecute();
+            executeActions(e, p, matchedCommand, command, actions);
+            return true;
         }
         return false;
     }
 
     private boolean checkPatternBlock(PlayerCommandPreprocessEvent e, Player p, String command, CommandGroup group) {
         String executedCommandBase = Utils.cutCommand(command).substring(1);
+        boolean matched = false;
+        String matchedPattern = executedCommandBase;
         for (Pattern pattern : group.commandsToBlockPattern()) {
             Matcher matcher = pattern.matcher(executedCommandBase);
-            boolean check = matcher.matches();
-            check = group.whitelistMode() != check;
-            if (check) {
-                Utils.printDebug(() -> "command execution blocked by pattern match for player '" + p.getName() + "'. Pattern: " + pattern.pattern(), Utils.DEBUG_COMMANDS);
-                List<Action> actions = group.actionsToExecute();
-                executeActions(e, p, matcher.group(), command, actions);
-                return true;
+            if (matcher.matches()) {
+                matched = true;
+                matchedPattern = matcher.group();
+                break;
             }
+        }
+        boolean shouldBlock = group.whitelistMode() != matched;
+        if (shouldBlock) {
+            String finalMatchedPattern = matchedPattern;
+            Utils.printDebug(() -> "command execution blocked by pattern match for player '" + p.getName() + "'. Pattern: " + finalMatchedPattern, Utils.DEBUG_COMMANDS);
+            List<Action> actions = group.actionsToExecute();
+            executeActions(e, p, matchedPattern, command, actions);
+            return true;
         }
         return false;
     }
