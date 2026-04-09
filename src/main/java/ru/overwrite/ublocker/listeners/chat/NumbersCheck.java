@@ -50,9 +50,11 @@ public class NumbersCheck extends ChatListener {
             int digitsCount = 0;
 
             while (matcher.find()) {
-                String[] parts = matcher.group().split("\\.");
-                for (String part : parts) {
-                    digitsCount += part.length();
+                for (int i = matcher.start(), j = matcher.end(); i < j; i++) {
+                    char c = message.charAt(i);
+                    if (c >= '0' && c <= '9') {
+                        digitsCount++;
+                    }
                 }
             }
             if (digitsCount > numberCheckSettings.maxNumbers()) {
