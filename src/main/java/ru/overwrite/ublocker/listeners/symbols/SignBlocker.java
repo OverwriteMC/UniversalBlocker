@@ -12,9 +12,6 @@ import ru.overwrite.ublocker.conditions.ConditionChecker;
 import ru.overwrite.ublocker.utils.Utils;
 
 import java.util.List;
-import java.util.Set;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 public class SignBlocker extends SymbolBlocker {
 
@@ -50,41 +47,18 @@ public class SignBlocker extends SymbolBlocker {
             }
             switch (group.blockType()) {
                 case STRING: {
-                    if (checkStringBlock(e, p, combined, group.symbolsToBlock(), actions)) {
+                    if (super.checkStringBlock(e, p, combined, group.symbolsToBlock(), actions)) {
                         break outer;
                     }
                     break;
                 }
                 case PATTERN: {
-                    if (checkPatternBlock(e, p, combined, group.patternsToBlock(), actions)) {
+                    if (super.checkPatternBlock(e, p, combined, group.patternsToBlock(), actions)) {
                         break outer;
                     }
                     break;
                 }
             }
         }
-    }
-
-    private boolean checkStringBlock(SignChangeEvent e, Player p, String combined, Set<String> symbolsToBlock, List<Action> actions) {
-        for (String symbol : symbolsToBlock) {
-            if (combined.contains(symbol)) {
-                Utils.printDebug(() -> "Sign message '" + combined + "' contains blocked symbol" + symbol + ". (String)", Utils.DEBUG_SYMBOLS);
-                super.executeActions(e, p, combined, symbol, actions);
-                return true;
-            }
-        }
-        return false;
-    }
-
-    private boolean checkPatternBlock(SignChangeEvent e, Player p, String combined, Set<Pattern> patternsToBlock, List<Action> actions) {
-        for (Pattern pattern : patternsToBlock) {
-            Matcher matcher = pattern.matcher(combined.replace("\n", ""));
-            if (matcher.find()) {
-                Utils.printDebug(() -> "Sign message '" + combined + "' contains blocked symbol" + matcher.group() + ". (Patten)", Utils.DEBUG_SYMBOLS);
-                super.executeActions(e, p, combined, matcher.group(), actions);
-                return true;
-            }
-        }
-        return false;
     }
 }

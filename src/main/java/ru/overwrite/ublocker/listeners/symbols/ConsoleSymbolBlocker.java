@@ -4,7 +4,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.event.Cancellable;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
-import org.bukkit.event.Listener;
+import org.bukkit.event.server.RemoteServerCommandEvent;
 import org.bukkit.event.server.ServerCommandEvent;
 import ru.overwrite.ublocker.UniversalBlocker;
 import ru.overwrite.ublocker.actions.Action;
@@ -12,21 +12,16 @@ import ru.overwrite.ublocker.actions.ActionType;
 import ru.overwrite.ublocker.blockgroups.BlockFactor;
 import ru.overwrite.ublocker.blockgroups.SymbolGroup;
 import ru.overwrite.ublocker.color.ColorizerProvider;
-import ru.overwrite.ublocker.configuration.Config;
 import ru.overwrite.ublocker.utils.Utils;
 
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class ConsoleSymbolBlocker implements Listener {
-
-    private final UniversalBlocker plugin;
-    private final Config pluginConfig;
+public class ConsoleSymbolBlocker extends SymbolBlocker {
 
     public ConsoleSymbolBlocker(UniversalBlocker plugin) {
-        this.plugin = plugin;
-        this.pluginConfig = plugin.getPluginConfig();
+        super(plugin);
     }
 
     @EventHandler(priority = EventPriority.LOWEST)
@@ -62,14 +57,14 @@ public class ConsoleSymbolBlocker implements Listener {
     }
 
     private boolean checkStringBlock(ServerCommandEvent e, String command, SymbolGroup group) {
+        if (startWithExcludedString(Utils.cutCommand(command), group.excludedCommandsString())) {
+            return false;
+        }
         for (String symbol : group.symbolsToBlock()) {
-            if (startWithExcludedString(Utils.cutCommand(command), group.excludedCommandsString())) {
-                continue;
-            }
             if (command.contains(symbol)) {
                 Utils.printDebug(() -> "Command '" + command + "' contains blocked symbol" + symbol + ". (String)", Utils.DEBUG_SYMBOLS);
                 List<Action> actions = group.actionsToExecute();
-                executeActions(e, command, symbol, actions);
+                this.executeActions(e, command, symbol, actions);
                 return true;
             }
         }
@@ -77,15 +72,15 @@ public class ConsoleSymbolBlocker implements Listener {
     }
 
     private boolean checkPatternBlock(ServerCommandEvent e, String command, SymbolGroup group) {
+        if (startWithExcludedPattern(Utils.cutCommand(command), group.excludedCommandsPattern())) {
+            return false;
+        }
         for (Pattern pattern : group.patternsToBlock()) {
-            if (startWithExcludedPattern(Utils.cutCommand(command), group.excludedCommandsPattern())) {
-                continue;
-            }
             Matcher matcher = pattern.matcher(command);
             if (matcher.find()) {
                 Utils.printDebug(() -> "Command '" + command + "' contains blocked symbol" + matcher.group() + ". (Pattern)", Utils.DEBUG_SYMBOLS);
                 List<Action> actions = group.actionsToExecute();
-                executeActions(e, command, matcher.group(), actions);
+                this.executeActions(e, command, matcher.group(), actions);
                 return true;
             }
         }
@@ -94,8 +89,8 @@ public class ConsoleSymbolBlocker implements Listener {
 
     private static final String[] searchList = {"%player%", "%symbol%", "%msg%"};
 
-    public void executeActions(Cancellable e, String command, String symbol, List<Action> actions) {
-        Utils.printDebug(() -> "Starting executing actions for rcon and blocked symbol '" + symbol + "' (COMMAND)", Utils.DEBUG_SYMBOLS);
+    private void executeActions(Cancellable e, String command, String symbol, List<Action> actions) {
+        Utils.printDebug(() -> "Starting executing actions for console/rcon and blocked symbol '" + symbol + "' (COMMAND)", Utils.DEBUG_SYMBOLS);
         final String[] replacementList = {"CONSOLE", symbol, command};
 
         for (Action action : actions) {
@@ -135,30 +130,5 @@ public class ConsoleSymbolBlocker implements Listener {
 
     private String formatActionMessage(Action action, String[] replacementList) {
         return Utils.replaceEach(ColorizerProvider.COLORIZER.colorize(action.context()), searchList, replacementList);
-    }
-
-    private boolean startWithExcludedString(String commandBase, List<String> excludedList) {
-        if (excludedList.isEmpty()) {
-            return false;
-        }
-        for (String excluded : excludedList) {
-            if (commandBase.equalsIgnoreCase(excluded)) {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    private boolean startWithExcludedPattern(String commandBase, List<Pattern> excludedList) {
-        if (excludedList.isEmpty()) {
-            return false;
-        }
-        for (Pattern excluded : excludedList) {
-            Matcher matcher = excluded.matcher(commandBase);
-            if (matcher.lookingAt()) {
-                return true;
-            }
-        }
-        return false;
     }
 }

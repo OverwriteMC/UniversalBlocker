@@ -15,6 +15,9 @@ import ru.overwrite.ublocker.task.runner.Runner;
 import ru.overwrite.ublocker.utils.Utils;
 
 import java.util.List;
+import java.util.Set;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public abstract class SymbolBlocker implements Listener {
 
@@ -28,6 +31,54 @@ public abstract class SymbolBlocker implements Listener {
         this.plugin = plugin;
         this.pluginConfig = plugin.getPluginConfig();
         this.runner = plugin.getRunner();
+    }
+
+    protected boolean checkStringBlock(Cancellable e, Player p, String message, Set<String> symbolsToBlock, List<Action> actions) {
+        for (String symbol : symbolsToBlock) {
+            if (message.contains(symbol)) {
+                Utils.printDebug(() -> "String '" + message + "' contains blocked symbol" + symbol + ". (String)", Utils.DEBUG_SYMBOLS);
+                executeActions(e, p, message, symbol, actions);
+                return true;
+            }
+        }
+        return false;
+    }
+
+    protected boolean checkPatternBlock(Cancellable e, Player p, String message, Set<Pattern> patternsToBlock, List<Action> actions) {
+        for (Pattern pattern : patternsToBlock) {
+            Matcher matcher = pattern.matcher(message);
+            if (matcher.find()) {
+                Utils.printDebug(() -> "String '" + message + "' contains blocked symbol" + matcher.group() + ". (Pattern)", Utils.DEBUG_SYMBOLS);
+                executeActions(e, p, message, matcher.group(), actions);
+                return true;
+            }
+        }
+        return false;
+    }
+
+    protected boolean startWithExcludedString(String commandBase, List<String> excludedList) {
+        if (excludedList.isEmpty()) {
+            return false;
+        }
+        for (String excluded : excludedList) {
+            if (commandBase.equalsIgnoreCase(excluded)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    protected boolean startWithExcludedPattern(String commandBase, List<Pattern> excludedList) {
+        if (excludedList.isEmpty()) {
+            return false;
+        }
+        for (Pattern excluded : excludedList) {
+            Matcher matcher = excluded.matcher(commandBase);
+            if (matcher.lookingAt()) {
+                return true;
+            }
+        }
+        return false;
     }
 
     protected void executeActions(Cancellable e, Player p, String fullString, String symbol, List<Action> actions) {

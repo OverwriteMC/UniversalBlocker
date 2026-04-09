@@ -48,13 +48,13 @@ public class SyntaxBlocker extends SymbolBlocker {
             }
             switch (group.blockType()) {
                 case STRING: {
-                    if (checkStringBlock(e, p, command, group)) {
+                    if (this.checkStringBlock(e, p, command, group)) {
                         break outer;
                     }
                     break;
                 }
                 case PATTERN: {
-                    if (checkPatternBlock(e, p, command, group)) {
+                    if (this.checkPatternBlock(e, p, command, group)) {
                         break outer;
                     }
                     break;
@@ -64,10 +64,10 @@ public class SyntaxBlocker extends SymbolBlocker {
     }
 
     private boolean checkStringBlock(PlayerCommandPreprocessEvent e, Player p, String command, SymbolGroup group) {
+        if (startWithExcludedString(Utils.cutCommand(command), group.excludedCommandsString())) {
+            return false;
+        }
         for (String symbol : group.symbolsToBlock()) {
-            if (startWithExcludedString(Utils.cutCommand(command), group.excludedCommandsString())) {
-                continue;
-            }
             if (command.contains(symbol)) {
                 Utils.printDebug(() -> "Command '" + command + "' contains blocked symbol" + symbol + ". (String)", Utils.DEBUG_SYMBOLS);
                 List<Action> actions = group.actionsToExecute();
@@ -79,40 +79,15 @@ public class SyntaxBlocker extends SymbolBlocker {
     }
 
     private boolean checkPatternBlock(PlayerCommandPreprocessEvent e, Player p, String command, SymbolGroup group) {
+        if (startWithExcludedPattern(Utils.cutCommand(command), group.excludedCommandsPattern())) {
+            return false;
+        }
         for (Pattern pattern : group.patternsToBlock()) {
-            if (startWithExcludedPattern(Utils.cutCommand(command), group.excludedCommandsPattern())) {
-                continue;
-            }
             Matcher matcher = pattern.matcher(command);
             if (matcher.find()) {
                 Utils.printDebug(() -> "Command '" + command + "' contains blocked symbol" + matcher.group() + ". (Pattern)", Utils.DEBUG_SYMBOLS);
                 List<Action> actions = group.actionsToExecute();
                 super.executeActions(e, p, command, matcher.group(), actions);
-                return true;
-            }
-        }
-        return false;
-    }
-
-    private boolean startWithExcludedString(String commandBase, List<String> excludedList) {
-        if (excludedList.isEmpty()) {
-            return false;
-        }
-        for (String excluded : excludedList) {
-            if (commandBase.equalsIgnoreCase(excluded)) {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    private boolean startWithExcludedPattern(String commandBase, List<Pattern> excludedList) {
-        if (excludedList.isEmpty()) {
-            return false;
-        }
-        for (Pattern excluded : excludedList) {
-            Matcher matcher = excluded.matcher(commandBase);
-            if (matcher.lookingAt()) {
                 return true;
             }
         }

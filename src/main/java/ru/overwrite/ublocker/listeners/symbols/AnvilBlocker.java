@@ -5,6 +5,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
 import ru.overwrite.ublocker.UniversalBlocker;
 import ru.overwrite.ublocker.actions.Action;
 import ru.overwrite.ublocker.blockgroups.BlockFactor;
@@ -13,9 +14,6 @@ import ru.overwrite.ublocker.conditions.ConditionChecker;
 import ru.overwrite.ublocker.utils.Utils;
 
 import java.util.List;
-import java.util.Set;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 public class AnvilBlocker extends SymbolBlocker {
 
@@ -28,15 +26,16 @@ public class AnvilBlocker extends SymbolBlocker {
         if (e.getInventory().getType() != InventoryType.ANVIL || e.getSlot() != 2) {
             return;
         }
-        ItemStack resultItem = e.getCurrentItem();
-        if (resultItem == null || !resultItem.hasItemMeta() || !resultItem.getItemMeta().hasDisplayName()) {
-            return;
-        }
         Player p = (Player) e.getWhoClicked();
         if (plugin.isExcluded(p)) {
             return;
         }
-        String name = resultItem.getItemMeta().getDisplayName();
+        ItemStack resultItem = e.getCurrentItem();
+        ItemMeta itemMeta;
+        if (resultItem == null || (itemMeta = resultItem.getItemMeta()) != null || !itemMeta.hasDisplayName()) {
+            return;
+        }
+        String name = itemMeta.getDisplayName();
         outer:
         for (SymbolGroup group : pluginConfig.getSymbolBlockGroupSet()) {
             Utils.printDebug(() -> "Group checking now: " + group.groupId(), Utils.DEBUG_SYMBOLS);
@@ -54,41 +53,18 @@ public class AnvilBlocker extends SymbolBlocker {
             }
             switch (group.blockType()) {
                 case STRING: {
-                    if (checkStringBlock(e, p, name, group.symbolsToBlock(), actions)) {
+                    if (super.checkStringBlock(e, p, name, group.symbolsToBlock(), actions)) {
                         break outer;
                     }
                     break;
                 }
                 case PATTERN: {
-                    if (checkPatternBlock(e, p, name, group.patternsToBlock(), actions)) {
+                    if (super.checkPatternBlock(e, p, name, group.patternsToBlock(), actions)) {
                         break outer;
                     }
                     break;
                 }
             }
         }
-    }
-
-    private boolean checkStringBlock(InventoryClickEvent e, Player p, String name, Set<String> symbolsToBlock, List<Action> actions) {
-        for (String symbol : symbolsToBlock) {
-            if (name.contains(symbol)) {
-                Utils.printDebug(() -> "Item name '" + name + "' contains blocked symbol" + symbol + ". (String)", Utils.DEBUG_SYMBOLS);
-                super.executeActions(e, p, name, symbol, actions);
-                return true;
-            }
-        }
-        return false;
-    }
-
-    private boolean checkPatternBlock(InventoryClickEvent e, Player p, String name, Set<Pattern> patternsToBlock, List<Action> actions) {
-        for (Pattern pattern : patternsToBlock) {
-            Matcher matcher = pattern.matcher(name);
-            if (matcher.find()) {
-                Utils.printDebug(() -> "Item name '" + name + "' contains blocked symbol" + matcher.group() + ". (Pattern)", Utils.DEBUG_SYMBOLS);
-                super.executeActions(e, p, name, matcher.group(), actions);
-                return true;
-            }
-        }
-        return false;
     }
 }
