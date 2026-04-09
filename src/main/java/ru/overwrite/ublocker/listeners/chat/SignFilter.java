@@ -6,9 +6,6 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.block.SignChangeEvent;
 import ru.overwrite.ublocker.UniversalBlocker;
 import ru.overwrite.ublocker.configuration.data.SignCharsSettings;
-import ru.overwrite.ublocker.utils.Utils;
-
-import java.util.function.Predicate;
 
 public class SignFilter extends ChatListener {
 
@@ -33,34 +30,16 @@ public class SignFilter extends ChatListener {
         for (String message : messages) {
             if (message == null || message.isBlank())
                 continue;
-            if (containsBlockedChars(message, signCharsSettings)) {
+            String blockedChar = switch (signCharsSettings.mode()) {
+                case STRING -> getFirstBlockedChar(message, signCharsSettings.charSet());
+                case PATTERN -> getFirstBlockedChar(message, signCharsSettings.pattern());
+            };
+            if (blockedChar != null) {
                 e.setCancelled(true);
-                String[] replacementList = {p.getName(), getFirstBlockedChar(message, signCharsSettings), line0 + line1 + line2 + line3};
+                String[] replacementList = {p.getName(), blockedChar, line0 + line1 + line2 + line3};
                 super.executeActions(p, searchList, replacementList, signCharsSettings.actionsToExecute());
+                return;
             }
-            break;
         }
-    }
-
-    private boolean containsBlockedChars(String message, SignCharsSettings settings) {
-        return switch (settings.mode()) {
-            case STRING -> Utils.containsInvalidCharacters(message, settings.charSet());
-            case PATTERN -> !settings.pattern().matcher(message).matches();
-        };
-    }
-
-    private String getFirstBlockedChar(String message, SignCharsSettings settings) {
-        return switch (settings.mode()) {
-            case STRING -> Character.toString(Utils.getFirstBlockedChar(message, settings.charSet()));
-            case PATTERN -> {
-                Predicate<String> predicate = settings.pattern().asMatchPredicate();
-                yield Character.toString(
-                        message.codePoints()
-                                .filter(codePoint -> !predicate.test(Character.toString(codePoint)))
-                                .findFirst()
-                                .orElseThrow()
-                );
-            }
-        };
     }
 }

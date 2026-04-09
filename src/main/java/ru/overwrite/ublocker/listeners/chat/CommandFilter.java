@@ -6,9 +6,6 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.player.PlayerCommandPreprocessEvent;
 import ru.overwrite.ublocker.UniversalBlocker;
 import ru.overwrite.ublocker.configuration.data.CommandCharsSettings;
-import ru.overwrite.ublocker.utils.Utils;
-
-import java.util.function.Predicate;
 
 public class CommandFilter extends ChatListener {
 
@@ -26,32 +23,14 @@ public class CommandFilter extends ChatListener {
         }
         CommandCharsSettings commandCharsSettings = pluginConfig.getCommandCharsSettings();
         String message = e.getMessage();
-        if (containsBlockedChars(message, commandCharsSettings)) {
+        String blockedChar = switch (commandCharsSettings.mode()) {
+            case STRING -> getFirstBlockedChar(message, commandCharsSettings.charSet());
+            case PATTERN -> getFirstBlockedChar(message, commandCharsSettings.pattern());
+        };
+        if (blockedChar != null) {
             e.setCancelled(true);
-            String[] replacementList = {p.getName(), getFirstBlockedChar(message, commandCharsSettings)};
+            String[] replacementList = {p.getName(), blockedChar};
             super.executeActions(p, searchList, replacementList, commandCharsSettings.actionsToExecute());
         }
-    }
-
-    private boolean containsBlockedChars(String message, CommandCharsSettings settings) {
-        return switch (settings.mode()) {
-            case STRING -> Utils.containsInvalidCharacters(message, settings.charSet());
-            case PATTERN -> !settings.pattern().matcher(message).matches();
-        };
-    }
-
-    private String getFirstBlockedChar(String message, CommandCharsSettings settings) {
-        return switch (settings.mode()) {
-            case STRING -> Character.toString(Utils.getFirstBlockedChar(message, settings.charSet()));
-            case PATTERN -> {
-                Predicate<String> predicate = settings.pattern().asMatchPredicate();
-                yield Character.toString(
-                        message.codePoints()
-                                .filter(codePoint -> !predicate.test(Character.toString(codePoint)))
-                                .findFirst()
-                                .orElseThrow()
-                );
-            }
-        };
     }
 }

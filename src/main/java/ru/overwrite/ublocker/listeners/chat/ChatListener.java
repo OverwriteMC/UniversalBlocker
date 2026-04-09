@@ -1,5 +1,6 @@
 package ru.overwrite.ublocker.listeners.chat;
 
+import it.unimi.dsi.fastutil.chars.CharSet;
 import lombok.Getter;
 import lombok.Setter;
 import net.kyori.adventure.text.Component;
@@ -16,6 +17,7 @@ import ru.overwrite.ublocker.task.runner.Runner;
 import ru.overwrite.ublocker.utils.Utils;
 
 import java.util.List;
+import java.util.regex.Pattern;
 
 public abstract class ChatListener implements Listener {
 
@@ -33,7 +35,32 @@ public abstract class ChatListener implements Listener {
         this.runner = plugin.getRunner();
     }
 
-    public void executeActions(Player p, String[] searchList, String[] replacementList, List<Action> actions) {
+    protected String getFirstBlockedChar(String str, CharSet charSet) {
+        for (int i = 0, length = str.length(); i < length; ++i) {
+            char c = str.charAt(i);
+            if (!charSet.contains(c)) {
+                return Character.toString(c);
+            }
+        }
+        return null;
+    }
+
+    protected String getFirstBlockedChar(String str, Pattern pattern) {
+        for (int i = 0, length = str.length(); i < length; ) {
+            int codePoint = str.codePointAt(i);
+            int charCount = Character.charCount(codePoint);
+            String symbol = str.substring(i, i + charCount);
+
+            if (!pattern.matcher(symbol).matches()) {
+                return symbol;
+            }
+
+            i += charCount;
+        }
+        return null;
+    }
+
+    protected void executeActions(Player p, String[] searchList, String[] replacementList, List<Action> actions) {
         Utils.printDebug(() -> "Starting executing actions for player '" + p.getName() + "'", Utils.DEBUG_CHAT);
 
         for (Action action : actions) {

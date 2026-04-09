@@ -6,9 +6,6 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
 import ru.overwrite.ublocker.UniversalBlocker;
 import ru.overwrite.ublocker.configuration.data.ChatCharsSettings;
-import ru.overwrite.ublocker.utils.Utils;
-
-import java.util.function.Predicate;
 
 public class ChatFilter extends ChatListener {
 
@@ -26,32 +23,14 @@ public class ChatFilter extends ChatListener {
         }
         ChatCharsSettings chatCharsSettings = pluginConfig.getChatCharsSettings();
         String message = e.getMessage();
-        if (containsBlockedChars(message, chatCharsSettings)) {
+        String blockedChar = switch (chatCharsSettings.mode()) {
+            case STRING -> getFirstBlockedChar(message, chatCharsSettings.charSet());
+            case PATTERN -> getFirstBlockedChar(message, chatCharsSettings.pattern());
+        };
+        if (blockedChar != null) {
             e.setCancelled(true);
-            String[] replacementList = {p.getName(), getFirstBlockedChar(message, chatCharsSettings), message};
+            String[] replacementList = {p.getName(), blockedChar, message};
             super.executeActions(p, searchList, replacementList, chatCharsSettings.actionsToExecute());
         }
-    }
-
-    private boolean containsBlockedChars(String message, ChatCharsSettings chatCharsSettings) {
-        return switch (chatCharsSettings.mode()) {
-            case STRING -> Utils.containsInvalidCharacters(message, chatCharsSettings.charSet());
-            case PATTERN -> !chatCharsSettings.pattern().matcher(message).matches();
-        };
-    }
-
-    private String getFirstBlockedChar(String message, ChatCharsSettings chatCharsSettings) {
-        return switch (chatCharsSettings.mode()) {
-            case STRING -> Character.toString(Utils.getFirstBlockedChar(message, chatCharsSettings.charSet()));
-            case PATTERN -> {
-                Predicate<String> allowedCharsPattern = chatCharsSettings.pattern().asMatchPredicate();
-                yield Character.toString(
-                        message.codePoints()
-                                .filter(codePoint -> !allowedCharsPattern.test(Character.toString(codePoint)))
-                                .findFirst()
-                                .orElseThrow()
-                );
-            }
-        };
     }
 }

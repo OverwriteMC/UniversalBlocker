@@ -6,9 +6,6 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.player.PlayerEditBookEvent;
 import ru.overwrite.ublocker.UniversalBlocker;
 import ru.overwrite.ublocker.configuration.data.BookCharsSettings;
-import ru.overwrite.ublocker.utils.Utils;
-
-import java.util.function.Predicate;
 
 public class BookFilter extends ChatListener {
 
@@ -24,37 +21,21 @@ public class BookFilter extends ChatListener {
         if (super.isAdmin(p, "ublocker.bypass.bookchars")) {
             return;
         }
+
         BookCharsSettings bookCharsSettings = pluginConfig.getBookCharsSettings();
+
         for (String page : e.getNewBookMeta().getPages()) {
             String serialisedMessage = page.replace("\n", "");
-            if (containsBlockedChars(serialisedMessage, bookCharsSettings)) {
+            String blockedChar = switch (bookCharsSettings.mode()) {
+                case STRING -> getFirstBlockedChar(serialisedMessage, bookCharsSettings.charSet());
+                case PATTERN -> getFirstBlockedChar(serialisedMessage, bookCharsSettings.pattern());
+            };
+            if (blockedChar != null) {
                 e.setCancelled(true);
-                String[] replacementList = {p.getName(), getFirstBlockedChar(serialisedMessage, bookCharsSettings)};
+                String[] replacementList = {p.getName(), blockedChar};
                 super.executeActions(p, searchList, replacementList, bookCharsSettings.actionsToExecute());
-                break;
+                return;
             }
         }
-    }
-
-    private boolean containsBlockedChars(String message, BookCharsSettings settings) {
-        return switch (settings.mode()) {
-            case STRING -> Utils.containsInvalidCharacters(message, settings.charSet());
-            case PATTERN -> !settings.pattern().matcher(message).matches();
-        };
-    }
-
-    private String getFirstBlockedChar(String message, BookCharsSettings settings) {
-        return switch (settings.mode()) {
-            case STRING -> Character.toString(Utils.getFirstBlockedChar(message, settings.charSet()));
-            case PATTERN -> {
-                Predicate<String> predicate = settings.pattern().asMatchPredicate();
-                yield Character.toString(
-                        message.codePoints()
-                                .filter(codePoint -> !predicate.test(Character.toString(codePoint)))
-                                .findFirst()
-                                .orElseThrow()
-                );
-            }
-        };
     }
 }
