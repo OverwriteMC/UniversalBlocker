@@ -169,7 +169,6 @@ public final class UniversalBlocker extends JavaPlugin {
             pm.registerEvents(new SyntaxBlocker(this), this);
             pm.registerEvents(new ChatBlocker(this), this);
             pm.registerEvents(new ConsoleSymbolBlocker(this), this);
-            pm.registerEvents(new RconSymbolBlocker(this), this);
             pm.registerEvents(new SignBlocker(this), this);
             pm.registerEvents(new AnvilBlocker(this), this);
         }
