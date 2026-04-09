@@ -26,7 +26,8 @@ public class BanWords extends ChatListener {
             return;
         }
         BanWordsSettings banWordsSettings = pluginConfig.getBanWordsSettings();
-        String message = e.getMessage().toLowerCase();
+        String rawMessage = e.getMessage();
+        String message = rawMessage.toLowerCase();
         if (banWordsSettings.stripColor()) {
             message = Utils.stripColorCodes(message);
         }
@@ -34,7 +35,7 @@ public class BanWords extends ChatListener {
             case STRING: {
                 for (String banword : banWordsSettings.banWordsString()) {
                     if (message.contains(banword)) {
-                        blockBanWord(p, banword, message, e, banWordsSettings);
+                        blockBanWord(p, banword, rawMessage, e, banWordsSettings);
                         return;
                     }
                 }
@@ -44,7 +45,7 @@ public class BanWords extends ChatListener {
                 for (Pattern banword : banWordsSettings.banWordsPattern()) {
                     Matcher matcher = banword.matcher(message);
                     if (matcher.find()) {
-                        blockBanWord(p, matcher.group(), message, e, banWordsSettings);
+                        blockBanWord(p, matcher.group(), rawMessage, e, banWordsSettings);
                         return;
                     }
                 }
@@ -53,15 +54,15 @@ public class BanWords extends ChatListener {
         }
     }
 
-    private void blockBanWord(Player p, String banword, String message, AsyncPlayerChatEvent e, BanWordsSettings banWordsSettings) {
+    private void blockBanWord(Player p, String banword, String rawMessage, AsyncPlayerChatEvent e, BanWordsSettings banWordsSettings) {
         if (banWordsSettings.strict()) {
             e.setCancelled(true);
-            String[] replacementList = {p.getName(), banword, message};
+            String[] replacementList = {p.getName(), banword, rawMessage};
             super.executeActions(p, searchList, replacementList, banWordsSettings.actionsToExecute());
             return;
         }
         Utils.printDebug(() -> "Censored word " + banword, Utils.DEBUG_CHAT);
         String censored = banWordsSettings.censorSymbol().repeat(banword.length());
-        e.setMessage(message.replace(banword, censored));
+        e.setMessage(rawMessage.replace(banword, censored));
     }
 }
