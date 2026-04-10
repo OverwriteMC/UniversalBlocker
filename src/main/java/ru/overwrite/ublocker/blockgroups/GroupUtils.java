@@ -1,7 +1,5 @@
 package ru.overwrite.ublocker.blockgroups;
 
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableSet;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
 import lombok.experimental.UtilityClass;
