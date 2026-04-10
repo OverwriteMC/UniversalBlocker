@@ -36,7 +36,7 @@ public abstract class SymbolBlocker implements Listener {
     protected boolean checkStringBlock(Cancellable e, Player p, String message, ObjectSet<String> symbolsToBlock, ObjectList<Action> actions) {
         for (String symbol : symbolsToBlock) {
             if (message.contains(symbol)) {
-                Utils.printDebug(() -> "String '" + message + "' contains blocked symbol" + symbol + ". (String)", Utils.DEBUG_SYMBOLS);
+                Utils.printDebug(() -> "String '" + message + "' contains blocked symbol " + symbol + ".", Utils.DEBUG_SYMBOLS);
                 executeActions(e, p, message, symbol, actions);
                 return true;
             }
@@ -48,7 +48,7 @@ public abstract class SymbolBlocker implements Listener {
         for (Pattern pattern : patternsToBlock) {
             Matcher matcher = pattern.matcher(message);
             if (matcher.find()) {
-                Utils.printDebug(() -> "String '" + message + "' contains blocked symbol" + matcher.group() + ". (Pattern)", Utils.DEBUG_SYMBOLS);
+                Utils.printDebug(() -> "String '" + message + "' contains blocked symbol " + matcher.group() + ". (Pattern)", Utils.DEBUG_SYMBOLS);
                 executeActions(e, p, message, matcher.group(), actions);
                 return true;
             }
