@@ -49,10 +49,6 @@
                             <pattern>org.bstats</pattern>
                             <shadedPattern>ru.overwrite.ublocker.utils.metrics</shadedPattern>
                         </relocation>
-                        <relocation>
-                            <pattern>com.google.common.collect</pattern>
-                            <shadedPattern>ru.overwrite.ublocker.libs.com.google.common.collect</shadedPattern>
-                        </relocation>
                     </relocations>
                     <filters>
                         <filter>
@@ -165,18 +161,6 @@
             <version>RELEASE</version>
             <optional>true</optional>
             <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.testng</groupId>
-            <artifactId>testng</artifactId>
-            <version>7.12.0</version>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.mockito</groupId>
-            <artifactId>mockito-core</artifactId>
-            <version>5.21.0</version>
-            <scope>test</scope>
         </dependency>
     </dependencies>
 </project>
