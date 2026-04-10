@@ -31,7 +31,7 @@ public class AnvilBlocker extends SymbolBlocker {
         }
         ItemStack resultItem = e.getCurrentItem();
         ItemMeta itemMeta;
-        if (resultItem == null || (itemMeta = resultItem.getItemMeta()) != null || !itemMeta.hasDisplayName()) {
+        if (resultItem == null || (itemMeta = resultItem.getItemMeta()) == null || !itemMeta.hasDisplayName()) {
             return;
         }
         String name = itemMeta.getDisplayName();
