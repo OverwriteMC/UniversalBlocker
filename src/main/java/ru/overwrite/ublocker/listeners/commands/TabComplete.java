@@ -1,6 +1,7 @@
 package ru.overwrite.ublocker.listeners.commands;
 
 import com.destroystokyo.paper.event.server.AsyncTabCompleteEvent;
+import it.unimi.dsi.fastutil.objects.ObjectList;
 import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.entity.Player;
@@ -50,7 +51,7 @@ public class TabComplete implements Listener {
             Utils.printDebug(() -> "Group checking now: " + group.groupId(), Utils.DEBUG_COMMANDS);
             Utils.printDebug(() -> "Block type: " + group.blockType(), Utils.DEBUG_COMMANDS);
 
-            List<Action> actions = group.actionsToExecute();
+            ObjectList<Action> actions = group.actionsToExecute();
             if (actions.isEmpty()) {
                 continue;
             }
@@ -127,7 +128,7 @@ public class TabComplete implements Listener {
         return false;
     }
 
-    private boolean shouldBlockTabComplete(Player p, List<Action> actions) {
+    private boolean shouldBlockTabComplete(Player p, ObjectList<Action> actions) {
         for (Action action : actions) {
             switch (action.type()) {
                 case BLOCK_TAB_COMPLETE: {

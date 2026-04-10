@@ -1,5 +1,7 @@
 package ru.overwrite.ublocker.blockgroups;
 
+import it.unimi.dsi.fastutil.objects.ObjectList;
+import it.unimi.dsi.fastutil.objects.ObjectSet;
 import ru.overwrite.ublocker.actions.Action;
 import ru.overwrite.ublocker.conditions.Condition;
 
@@ -11,12 +13,12 @@ public record SymbolGroup(
         String groupId,
         BlockType blockType,
         Set<BlockFactor> blockFactor,
-        Set<String> symbolsToBlock,
-        Set<Pattern> patternsToBlock,
-        List<String> excludedCommandsString,
-        List<Pattern> excludedCommandsPattern,
-        List<Condition> conditionsToCheck,
-        List<Action> actionsToExecute
+        ObjectSet<String> symbolsToBlock,
+        ObjectSet<Pattern> patternsToBlock,
+        ObjectList<String> excludedCommandsString,
+        ObjectList<Pattern> excludedCommandsPattern,
+        ObjectList<Condition> conditionsToCheck,
+        ObjectList<Action> actionsToExecute
 ) {
 
     public SymbolGroup(
@@ -25,8 +27,8 @@ public record SymbolGroup(
             Set<BlockFactor> blockFactor,
             List<String> symbolsToBlock,
             List<String> excludedCommand,
-            List<Condition> conditionsToCheck,
-            List<Action> actionsToExecute
+            ObjectList<Condition> conditionsToCheck,
+            ObjectList<Action> actionsToExecute
     ) {
         this(
                 groupId,

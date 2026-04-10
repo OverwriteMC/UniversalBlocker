@@ -7,12 +7,10 @@ import org.bukkit.entity.Player;
 import ru.overwrite.ublocker.utils.Utils;
 import ru.overwrite.ublocker.utils.WGUtils;
 
-import java.util.List;
-
 @UtilityClass
 public class ConditionChecker {
 
-    public boolean isMeetsRequirements(Player p, List<Condition> conditions) {
+    public boolean isMeetsRequirements(Player p, ObjectList<Condition> conditions) {
         if (conditions == null || conditions.isEmpty()) {
             return true;
         }

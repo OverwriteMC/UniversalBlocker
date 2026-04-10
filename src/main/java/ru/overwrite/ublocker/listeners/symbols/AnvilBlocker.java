@@ -1,5 +1,6 @@
 package ru.overwrite.ublocker.listeners.symbols;
 
+import it.unimi.dsi.fastutil.objects.ObjectList;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.inventory.InventoryClickEvent;
@@ -12,8 +13,6 @@ import ru.overwrite.ublocker.blockgroups.BlockFactor;
 import ru.overwrite.ublocker.blockgroups.SymbolGroup;
 import ru.overwrite.ublocker.conditions.ConditionChecker;
 import ru.overwrite.ublocker.utils.Utils;
-
-import java.util.List;
 
 public class AnvilBlocker extends SymbolBlocker {
 
@@ -43,7 +42,7 @@ public class AnvilBlocker extends SymbolBlocker {
                 Utils.printDebug(() -> "Group " + group.groupId() + " does not have 'anvil' block factor. Skipping...", Utils.DEBUG_SYMBOLS);
                 continue;
             }
-            List<Action> actions = group.actionsToExecute();
+            ObjectList<Action> actions = group.actionsToExecute();
             if (actions.isEmpty()) {
                 continue;
             }

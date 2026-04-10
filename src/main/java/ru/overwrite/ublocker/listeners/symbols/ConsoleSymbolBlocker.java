@@ -1,5 +1,6 @@
 package ru.overwrite.ublocker.listeners.symbols;
 
+import it.unimi.dsi.fastutil.objects.ObjectList;
 import org.bukkit.Bukkit;
 import org.bukkit.event.Cancellable;
 import org.bukkit.event.EventHandler;
@@ -14,7 +15,6 @@ import ru.overwrite.ublocker.blockgroups.SymbolGroup;
 import ru.overwrite.ublocker.color.ColorizerProvider;
 import ru.overwrite.ublocker.utils.Utils;
 
-import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -35,7 +35,7 @@ public class ConsoleSymbolBlocker extends SymbolBlocker {
                 Utils.printDebug(() -> "Group " + group.groupId() + " does not have 'console_command' or 'rcon_command' block factor. Skipping...", Utils.DEBUG_SYMBOLS);
                 continue;
             }
-            List<Action> actions = group.actionsToExecute();
+            ObjectList<Action> actions = group.actionsToExecute();
             if (actions.isEmpty()) {
                 continue;
             }
@@ -63,7 +63,7 @@ public class ConsoleSymbolBlocker extends SymbolBlocker {
         for (String symbol : group.symbolsToBlock()) {
             if (command.contains(symbol)) {
                 Utils.printDebug(() -> "Command '" + command + "' contains blocked symbol" + symbol + ". (String)", Utils.DEBUG_SYMBOLS);
-                List<Action> actions = group.actionsToExecute();
+                ObjectList<Action> actions = group.actionsToExecute();
                 this.executeActions(e, command, symbol, actions);
                 return true;
             }
@@ -79,7 +79,7 @@ public class ConsoleSymbolBlocker extends SymbolBlocker {
             Matcher matcher = pattern.matcher(command);
             if (matcher.find()) {
                 Utils.printDebug(() -> "Command '" + command + "' contains blocked symbol" + matcher.group() + ". (Pattern)", Utils.DEBUG_SYMBOLS);
-                List<Action> actions = group.actionsToExecute();
+                ObjectList<Action> actions = group.actionsToExecute();
                 this.executeActions(e, command, matcher.group(), actions);
                 return true;
             }
@@ -89,7 +89,7 @@ public class ConsoleSymbolBlocker extends SymbolBlocker {
 
     private static final String[] searchList = {"%player%", "%symbol%", "%msg%"};
 
-    private void executeActions(Cancellable e, String command, String symbol, List<Action> actions) {
+    private void executeActions(Cancellable e, String command, String symbol, ObjectList<Action> actions) {
         Utils.printDebug(() -> "Starting executing actions for console/rcon and blocked symbol '" + symbol + "' (COMMAND)", Utils.DEBUG_SYMBOLS);
         final String[] replacementList = {"CONSOLE", symbol, command};
 

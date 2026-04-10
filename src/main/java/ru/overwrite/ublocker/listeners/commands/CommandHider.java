@@ -1,5 +1,6 @@
 package ru.overwrite.ublocker.listeners.commands;
 
+import it.unimi.dsi.fastutil.objects.ObjectList;
 import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.entity.Player;
@@ -36,7 +37,7 @@ public class CommandHider implements Listener {
                 if (group.blockType() == BlockType.PATTERN) {
                     continue;
                 }
-                List<Action> actions = group.actionsToExecute();
+                ObjectList<Action> actions = group.actionsToExecute();
                 if (actions.isEmpty()) {
                     continue;
                 }
@@ -64,7 +65,7 @@ public class CommandHider implements Listener {
         return group.whitelistMode() != matched;
     }
 
-    private boolean shouldHideCommand(Player p, List<Action> actions) {
+    private boolean shouldHideCommand(Player p, ObjectList<Action> actions) {
         for (Action action : actions) {
             switch (action.type()) {
                 case HIDE: {

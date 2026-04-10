@@ -3,7 +3,9 @@ package ru.overwrite.ublocker.configuration;
 import it.unimi.dsi.fastutil.chars.CharOpenHashSet;
 import it.unimi.dsi.fastutil.chars.CharSet;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
+import it.unimi.dsi.fastutil.objects.ObjectList;
 import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
+import it.unimi.dsi.fastutil.objects.ObjectSet;
 import lombok.AccessLevel;
 import lombok.Getter;
 import org.bukkit.configuration.ConfigurationSection;
@@ -38,9 +40,9 @@ public class Config {
         this.plugin = plugin;
     }
 
-    private Set<CommandGroup> commandBlockGroupSet;
+    private ObjectSet<CommandGroup> commandBlockGroupSet;
 
-    private Set<SymbolGroup> symbolBlockGroupSet;
+    private ObjectSet<SymbolGroup> symbolBlockGroupSet;
 
     private Set<String> excludedPlayers;
 
@@ -80,7 +82,7 @@ public class Config {
             case PATTERN -> pattern = Pattern.compile(allowedChars.getString("pattern"));
         }
 
-        List<Action> actionList = getChatActions(allowedChars);
+        ObjectList<Action> actionList = getChatActions(allowedChars);
 
         this.chatCharsSettings = new ChatCharsSettings(
                 mode,
@@ -113,7 +115,7 @@ public class Config {
             case PATTERN -> pattern = Pattern.compile(allowedBookChars.getString("pattern"));
         }
 
-        List<Action> actionList = getChatActions(allowedBookChars);
+        ObjectList<Action> actionList = getChatActions(allowedBookChars);
 
         this.bookCharsSettings = new BookCharsSettings(
                 mode,
@@ -146,7 +148,7 @@ public class Config {
             case PATTERN -> pattern = Pattern.compile(allowedSignChars.getString("pattern"));
         }
 
-        List<Action> actionList = getChatActions(allowedSignChars);
+        ObjectList<Action> actionList = getChatActions(allowedSignChars);
 
         this.signCharsSettings = new SignCharsSettings(
                 mode,
@@ -179,7 +181,7 @@ public class Config {
             case PATTERN -> pattern = Pattern.compile(allowedCommandChars.getString("pattern"));
         }
 
-        List<Action> actionList = getChatActions(allowedCommandChars);
+        ObjectList<Action> actionList = getChatActions(allowedCommandChars);
 
         this.commandCharsSettings = new CommandCharsSettings(
                 mode,
@@ -208,7 +210,7 @@ public class Config {
         boolean strictCheck = numbersCheck.getBoolean("strict");
         boolean stripColor = numbersCheck.getBoolean("strip_color");
 
-        List<Action> actionList = getChatActions(numbersCheck);
+        ObjectList<Action> actionList = getChatActions(numbersCheck);
 
         this.numberCheckSettings = new NumberCheckSettings(
                 maxNumbers,
@@ -236,7 +238,7 @@ public class Config {
         int maxUpperCasePercent = caseCheck.getInt("max_uppercase_percent", 70);
         boolean strictCheck = caseCheck.getBoolean("strict");
 
-        List<Action> actionList = getChatActions(caseCheck);
+        ObjectList<Action> actionList = getChatActions(caseCheck);
 
         this.caseCheckSettings = new CaseCheckSettings(
                 maxUpperCasePercent,
@@ -266,7 +268,7 @@ public class Config {
         int historySize = sameMessages.getInt("history_size", 10);
         boolean stripColor = sameMessages.getBoolean("strip_color");
 
-        List<Action> actionList = getChatActions(sameMessages);
+        ObjectList<Action> actionList = getChatActions(sameMessages);
 
         this.sameMessagesSettings = new SameMessagesSettings(
                 samePercents,
@@ -294,8 +296,8 @@ public class Config {
         }
 
         BlockType mode = BlockType.valueOf(banWords.getString("mode").toUpperCase());
-        Set<String> banWordsString = null;
-        Set<Pattern> banWordsPattern = null;
+        ObjectSet<String> banWordsString = null;
+        ObjectSet<Pattern> banWordsPattern = null;
         List<String> banWordsList = banWords.getStringList("words");
         switch (mode) {
             case STRING:
@@ -314,7 +316,7 @@ public class Config {
         String censorSymbol = String.valueOf(banWords.getString("censor_symbol", "*").charAt(0));
         boolean stripColor = banWords.getBoolean("strip_color");
 
-        List<Action> actionList = getChatActions(banWords);
+        ObjectList<Action> actionList = getChatActions(banWords);
 
         this.banWordsSettings = new BanWordsSettings(
                 mode,
@@ -334,14 +336,14 @@ public class Config {
     public void setupCommands(String path) {
         final FileConfiguration commands = getFile(path, "commands.yml");
         Set<String> keys = commands.getConfigurationSection("commands").getKeys(false);
-        Set<CommandGroup> commandBlockGroupSetBuilder = new ObjectOpenHashSet<>(keys.size());
+        ObjectSet<CommandGroup> commandBlockGroupSetBuilder = new ObjectOpenHashSet<>(keys.size());
         for (String commandsID : keys) {
             final ConfigurationSection section = commands.getConfigurationSection("commands." + commandsID);
             BlockType blockType = BlockType.valueOf(section.getString("mode").toUpperCase());
             boolean blockAliases = section.getBoolean("block_aliases") && blockType.isString();
             boolean whitelistMode = section.getBoolean("whitelist_mode");
-            List<Condition> conditionList = getConditionList(section.getStringList("conditions"));
-            List<Action> actionList = getActionList(section.getStringList("actions"));
+            ObjectList<Condition> conditionList = getConditionList(section.getStringList("conditions"));
+            ObjectList<Action> actionList = getActionList(section.getStringList("actions"));
             commandBlockGroupSetBuilder.add(
                     new CommandGroup(
                             commandsID,
@@ -363,13 +365,13 @@ public class Config {
     public void setupSymbols(String path) {
         final FileConfiguration symbols = getFile(path, "symbols.yml");
         Set<String> keys = symbols.getConfigurationSection("symbols").getKeys(false);
-        Set<SymbolGroup> symbolBlockGroupSetBuilder = new ObjectOpenHashSet<>(keys.size());
+        ObjectSet<SymbolGroup> symbolBlockGroupSetBuilder = new ObjectOpenHashSet<>(keys.size());
         for (String symbolsID : keys) {
             final ConfigurationSection section = symbols.getConfigurationSection("symbols." + symbolsID);
             BlockType blockType = BlockType.valueOf(section.getString("mode").toUpperCase());
             Set<BlockFactor> blockFactor = getBlockFactors(section.getString("block_factor", ""));
-            List<Condition> conditionList = getConditionList(section.getStringList("conditions"));
-            List<Action> actionList = getActionList(section.getStringList("actions"));
+            ObjectList<Condition> conditionList = getConditionList(section.getStringList("conditions"));
+            ObjectList<Action> actionList = getActionList(section.getStringList("actions"));
             symbolBlockGroupSetBuilder.add(
                     new SymbolGroup(
                             symbolsID,
@@ -385,12 +387,12 @@ public class Config {
         this.symbolBlockGroupSet = symbolBlockGroupSetBuilder;
     }
 
-    public List<Action> getChatActions(ConfigurationSection section) {
+    public ObjectList<Action> getChatActions(ConfigurationSection section) {
         List<String> actionStrings = section.getStringList("actions");
         if (!actionStrings.isEmpty()) {
             return getActionList(section.getStringList("actions"));
         }
-        List<String> actions = new ObjectArrayList<>();
+        ObjectList<String> actions = new ObjectArrayList<>();
         String message = section.getString("message");
         if (message != null) {
             actions.add("[MESSAGE] " + message);
@@ -414,8 +416,8 @@ public class Config {
         return getActionList(actions);
     }
 
-    private List<Action> getActionList(List<String> actionStrings) {
-        List<Action> actionListBuilder = new ObjectArrayList<>(actionStrings.size());
+    private ObjectList<Action> getActionList(List<String> actionStrings) {
+        ObjectList<Action> actionListBuilder = new ObjectArrayList<>(actionStrings.size());
         for (String actionString : actionStrings) {
             Action action = Action.fromString(actionString);
             if (action != null) {
@@ -425,8 +427,8 @@ public class Config {
         return actionListBuilder;
     }
 
-    private List<Condition> getConditionList(List<String> conditionStrings) {
-        List<Condition> conditionListBuilder = new ObjectArrayList<>(conditionStrings.size());
+    private ObjectList<Condition> getConditionList(List<String> conditionStrings) {
+        ObjectList<Condition> conditionListBuilder = new ObjectArrayList<>(conditionStrings.size());
         for (String conditionString : conditionStrings) {
             Condition condition = Condition.fromString(conditionString);
             if (condition != null) {

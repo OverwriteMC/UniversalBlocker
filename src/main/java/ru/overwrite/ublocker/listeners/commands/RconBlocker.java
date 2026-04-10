@@ -1,5 +1,6 @@
 package ru.overwrite.ublocker.listeners.commands;
 
+import it.unimi.dsi.fastutil.objects.ObjectList;
 import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.event.Cancellable;
@@ -41,7 +42,7 @@ public class RconBlocker implements Listener {
         for (CommandGroup group : pluginConfig.getCommandBlockGroupSet()) {
             Utils.printDebug(() -> "Group checking now: " + group.groupId(), Utils.DEBUG_COMMANDS);
             Utils.printDebug(() -> "Block type: " + group.blockType(), Utils.DEBUG_COMMANDS);
-            List<Action> actions = group.actionsToExecute();
+            ObjectList<Action> actions = group.actionsToExecute();
             if (actions.isEmpty()) {
                 continue;
             }
@@ -105,7 +106,7 @@ public class RconBlocker implements Listener {
 
     private static final String[] searchList = {"%player%", "%command%", "%msg%"};
 
-    public void executeActions(Cancellable e, String fullCommand, String baseCommand, List<Action> actions) {
+    public void executeActions(Cancellable e, String fullCommand, String baseCommand, ObjectList<Action> actions) {
         Utils.printDebug(() -> "Starting executing actions for rcon and blocked command '" + baseCommand + "'", Utils.DEBUG_COMMANDS);
         final String[] replacementList = {"RCON", baseCommand, fullCommand};
 

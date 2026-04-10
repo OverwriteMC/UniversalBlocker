@@ -1,5 +1,6 @@
 package ru.overwrite.ublocker.listeners.symbols;
 
+import it.unimi.dsi.fastutil.objects.ObjectList;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -11,7 +12,6 @@ import ru.overwrite.ublocker.blockgroups.SymbolGroup;
 import ru.overwrite.ublocker.conditions.ConditionChecker;
 import ru.overwrite.ublocker.utils.Utils;
 
-import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -38,7 +38,7 @@ public class SyntaxBlocker extends SymbolBlocker {
                 Utils.printDebug(() -> "Group " + group.groupId() + " does not have 'command' block factor. Skipping...", Utils.DEBUG_SYMBOLS);
                 continue;
             }
-            List<Action> actions = group.actionsToExecute();
+            ObjectList<Action> actions = group.actionsToExecute();
             if (actions.isEmpty()) {
                 continue;
             }
@@ -70,7 +70,7 @@ public class SyntaxBlocker extends SymbolBlocker {
         for (String symbol : group.symbolsToBlock()) {
             if (command.contains(symbol)) {
                 Utils.printDebug(() -> "Command '" + command + "' contains blocked symbol" + symbol + ". (String)", Utils.DEBUG_SYMBOLS);
-                List<Action> actions = group.actionsToExecute();
+                ObjectList<Action> actions = group.actionsToExecute();
                 super.executeActions(e, p, command, symbol, actions);
                 return true;
             }
@@ -86,7 +86,7 @@ public class SyntaxBlocker extends SymbolBlocker {
             Matcher matcher = pattern.matcher(command);
             if (matcher.find()) {
                 Utils.printDebug(() -> "Command '" + command + "' contains blocked symbol" + matcher.group() + ". (Pattern)", Utils.DEBUG_SYMBOLS);
-                List<Action> actions = group.actionsToExecute();
+                ObjectList<Action> actions = group.actionsToExecute();
                 super.executeActions(e, p, command, matcher.group(), actions);
                 return true;
             }

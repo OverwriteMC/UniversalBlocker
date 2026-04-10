@@ -1,5 +1,7 @@
 package ru.overwrite.ublocker.listeners.symbols;
 
+import it.unimi.dsi.fastutil.objects.ObjectList;
+import it.unimi.dsi.fastutil.objects.ObjectSet;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.serializer.gson.GsonComponentSerializer;
 import org.bukkit.Bukkit;
@@ -14,8 +16,6 @@ import ru.overwrite.ublocker.configuration.Config;
 import ru.overwrite.ublocker.task.runner.Runner;
 import ru.overwrite.ublocker.utils.Utils;
 
-import java.util.List;
-import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -33,7 +33,7 @@ public abstract class SymbolBlocker implements Listener {
         this.runner = plugin.getRunner();
     }
 
-    protected boolean checkStringBlock(Cancellable e, Player p, String message, Set<String> symbolsToBlock, List<Action> actions) {
+    protected boolean checkStringBlock(Cancellable e, Player p, String message, ObjectSet<String> symbolsToBlock, ObjectList<Action> actions) {
         for (String symbol : symbolsToBlock) {
             if (message.contains(symbol)) {
                 Utils.printDebug(() -> "String '" + message + "' contains blocked symbol" + symbol + ". (String)", Utils.DEBUG_SYMBOLS);
@@ -44,7 +44,7 @@ public abstract class SymbolBlocker implements Listener {
         return false;
     }
 
-    protected boolean checkPatternBlock(Cancellable e, Player p, String message, Set<Pattern> patternsToBlock, List<Action> actions) {
+    protected boolean checkPatternBlock(Cancellable e, Player p, String message, ObjectSet<Pattern> patternsToBlock, ObjectList<Action> actions) {
         for (Pattern pattern : patternsToBlock) {
             Matcher matcher = pattern.matcher(message);
             if (matcher.find()) {
@@ -56,7 +56,7 @@ public abstract class SymbolBlocker implements Listener {
         return false;
     }
 
-    protected boolean startWithExcludedString(String commandBase, List<String> excludedList) {
+    protected boolean startWithExcludedString(String commandBase, ObjectList<String> excludedList) {
         if (excludedList.isEmpty()) {
             return false;
         }
@@ -68,7 +68,7 @@ public abstract class SymbolBlocker implements Listener {
         return false;
     }
 
-    protected boolean startWithExcludedPattern(String commandBase, List<Pattern> excludedList) {
+    protected boolean startWithExcludedPattern(String commandBase, ObjectList<Pattern> excludedList) {
         if (excludedList.isEmpty()) {
             return false;
         }
@@ -81,7 +81,7 @@ public abstract class SymbolBlocker implements Listener {
         return false;
     }
 
-    protected void executeActions(Cancellable e, Player p, String fullString, String symbol, List<Action> actions) {
+    protected void executeActions(Cancellable e, Player p, String fullString, String symbol, ObjectList<Action> actions) {
         Utils.printDebug(() -> "Starting executing actions for player '" + p.getName() + "' and blocked symbol '" + symbol + "'", Utils.DEBUG_SYMBOLS);
         final String[] replacementList = {p.getName(), p.getWorld().getName(), fullString, symbol};
 

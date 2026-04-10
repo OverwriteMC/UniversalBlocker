@@ -1,6 +1,7 @@
 package ru.overwrite.ublocker.listeners.chat;
 
 import it.unimi.dsi.fastutil.chars.CharSet;
+import it.unimi.dsi.fastutil.objects.ObjectList;
 import lombok.Getter;
 import lombok.Setter;
 import net.kyori.adventure.text.Component;
@@ -16,7 +17,6 @@ import ru.overwrite.ublocker.configuration.Config;
 import ru.overwrite.ublocker.task.runner.Runner;
 import ru.overwrite.ublocker.utils.Utils;
 
-import java.util.List;
 import java.util.regex.Pattern;
 
 public abstract class ChatListener implements Listener {
@@ -60,7 +60,7 @@ public abstract class ChatListener implements Listener {
         return null;
     }
 
-    protected void executeActions(Player p, String[] searchList, String[] replacementList, List<Action> actions) {
+    protected void executeActions(Player p, String[] searchList, String[] replacementList, ObjectList<Action> actions) {
         Utils.printDebug(() -> "Starting executing actions for player '" + p.getName() + "'", Utils.DEBUG_CHAT);
 
         for (Action action : actions) {

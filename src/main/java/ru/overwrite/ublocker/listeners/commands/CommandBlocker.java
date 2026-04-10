@@ -1,5 +1,6 @@
 package ru.overwrite.ublocker.listeners.commands;
 
+import it.unimi.dsi.fastutil.objects.ObjectList;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.serializer.gson.GsonComponentSerializer;
 import org.bukkit.Bukkit;
@@ -63,7 +64,7 @@ public class CommandBlocker implements Listener {
         for (CommandGroup group : pluginConfig.getCommandBlockGroupSet()) {
             Utils.printDebug(() -> "Group checking now: " + group.groupId(), Utils.DEBUG_COMMANDS);
             Utils.printDebug(() -> "Block type: " + group.blockType(), Utils.DEBUG_COMMANDS);
-            List<Action> actions = group.actionsToExecute();
+            ObjectList<Action> actions = group.actionsToExecute();
             if (actions.isEmpty()) {
                 continue;
             }
@@ -108,7 +109,7 @@ public class CommandBlocker implements Listener {
         if (shouldBlock) {
             String finalMatchedCommand = matchedCommand;
             Utils.printDebug(() -> "command execution blocked by string match for player '" + p.getName() + "'. Command: " + finalMatchedCommand, Utils.DEBUG_COMMANDS);
-            List<Action> actions = group.actionsToExecute();
+            ObjectList<Action> actions = group.actionsToExecute();
             executeActions(e, p, matchedCommand, command, actions);
             return true;
         }
@@ -131,7 +132,7 @@ public class CommandBlocker implements Listener {
         if (shouldBlock) {
             String finalMatchedPattern = matchedPattern;
             Utils.printDebug(() -> "command execution blocked by pattern match for player '" + p.getName() + "'. Pattern: " + finalMatchedPattern, Utils.DEBUG_COMMANDS);
-            List<Action> actions = group.actionsToExecute();
+            ObjectList<Action> actions = group.actionsToExecute();
             executeActions(e, p, matchedPattern, command, actions);
             return true;
         }
@@ -140,7 +141,7 @@ public class CommandBlocker implements Listener {
 
     private static final String[] searchList = {"%player%", "%world%", "%cmd%", "%fullcmd%"};
 
-    public void executeActions(Cancellable e, Player p, String com, String command, List<Action> actions) {
+    public void executeActions(Cancellable e, Player p, String com, String command, ObjectList<Action> actions) {
         Utils.printDebug(() -> "Starting executing actions for player '" + p.getName() + "' and command '" + command + "'", Utils.DEBUG_COMMANDS);
         final String[] replacementList = {p.getName(), p.getWorld().getName(), com, command};
 

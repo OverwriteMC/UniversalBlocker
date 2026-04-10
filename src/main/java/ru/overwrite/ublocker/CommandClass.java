@@ -1,6 +1,7 @@
 package ru.overwrite.ublocker;
 
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
+import it.unimi.dsi.fastutil.objects.ObjectList;
 import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
@@ -140,7 +141,7 @@ public class CommandClass implements TabExecutor {
         if (!sender.hasPermission("ublocker.admin")) {
             return List.of();
         }
-        final List<String> completions = new ObjectArrayList<>();
+        final ObjectList<String> completions = new ObjectArrayList<>();
         if (args.length == 1) {
             completions.add("reload");
             completions.add("debug");
@@ -173,11 +174,11 @@ public class CommandClass implements TabExecutor {
         return getResult(args, completions);
     }
 
-    private List<String> getResult(String[] args, List<String> completions) {
+    private ObjectList<String> getResult(String[] args, ObjectList<String> completions) {
         if (completions.isEmpty()) {
             return completions;
         }
-        final List<String> result = new ObjectArrayList<>();
+        final ObjectList<String> result = new ObjectArrayList<>();
         for (int i = 0; i < completions.size(); i++) {
             String c = completions.get(i);
             if (StringUtil.startsWithIgnoreCase(c, args[args.length - 1])) {

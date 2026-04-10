@@ -1,8 +1,7 @@
 package ru.overwrite.ublocker.configuration.data;
 
+import it.unimi.dsi.fastutil.objects.ObjectList;
 import ru.overwrite.ublocker.actions.Action;
-
-import java.util.List;
 
 public record SameMessagesSettings(
         int samePercents,
@@ -10,6 +9,6 @@ public record SameMessagesSettings(
         int minMessageLength,
         int historySize,
         boolean stripColor,
-        List<Action> actionsToExecute
+        ObjectList<Action> actionsToExecute
 ) {
 }

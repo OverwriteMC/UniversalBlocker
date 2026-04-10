@@ -1,10 +1,11 @@
 package ru.overwrite.ublocker.blockgroups;
 
+import it.unimi.dsi.fastutil.objects.ObjectList;
+import it.unimi.dsi.fastutil.objects.ObjectSet;
 import ru.overwrite.ublocker.actions.Action;
 import ru.overwrite.ublocker.conditions.Condition;
 
 import java.util.List;
-import java.util.Set;
 import java.util.regex.Pattern;
 
 public record CommandGroup(
@@ -12,10 +13,10 @@ public record CommandGroup(
         BlockType blockType,
         boolean blockAliases,
         boolean whitelistMode,
-        Set<String> commandsToBlockString,
-        Set<Pattern> commandsToBlockPattern,
-        List<Condition> conditionsToCheck,
-        List<Action> actionsToExecute
+        ObjectSet<String> commandsToBlockString,
+        ObjectSet<Pattern> commandsToBlockPattern,
+        ObjectList<Condition> conditionsToCheck,
+        ObjectList<Action> actionsToExecute
 ) {
 
     public CommandGroup(String groupId,
@@ -23,8 +24,8 @@ public record CommandGroup(
                         boolean blockAliases,
                         boolean whitelistMode,
                         List<String> commandsToBlock,
-                        List<Condition> conditionsToCheck,
-                        List<Action> actionsToExecute) {
+                        ObjectList<Condition> conditionsToCheck,
+                        ObjectList<Action> actionsToExecute) {
         this(
                 groupId,
                 blockType,

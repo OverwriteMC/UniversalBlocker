@@ -1,13 +1,12 @@
 package ru.overwrite.ublocker.configuration.data;
 
+import it.unimi.dsi.fastutil.objects.ObjectList;
 import ru.overwrite.ublocker.actions.Action;
-
-import java.util.List;
 
 public record NumberCheckSettings(
         int maxNumbers,
         boolean strictCheck,
         boolean stripColor,
-        List<Action> actionsToExecute
+        ObjectList<Action> actionsToExecute
 ) {
 }
