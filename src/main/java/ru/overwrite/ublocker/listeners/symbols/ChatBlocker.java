@@ -19,7 +19,7 @@ public class ChatBlocker extends SymbolBlocker {
     }
 
     @EventHandler(priority = EventPriority.LOWEST)
-    public void onCommand(AsyncPlayerChatEvent e) {
+    public void onChat(AsyncPlayerChatEvent e) {
         Player p = e.getPlayer();
         if (plugin.isExcluded(p)) {
             return;
