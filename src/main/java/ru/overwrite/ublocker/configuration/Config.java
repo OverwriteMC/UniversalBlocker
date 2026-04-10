@@ -1,7 +1,5 @@
 package ru.overwrite.ublocker.configuration;
 
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableSet;
 import it.unimi.dsi.fastutil.chars.CharOpenHashSet;
 import it.unimi.dsi.fastutil.chars.CharSet;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
@@ -336,11 +334,11 @@ public class Config {
     public void setupCommands(String path) {
         final FileConfiguration commands = getFile(path, "commands.yml");
         Set<String> keys = commands.getConfigurationSection("commands").getKeys(false);
-        ImmutableSet.Builder<CommandGroup> commandBlockGroupSetBuilder = ImmutableSet.builderWithExpectedSize(keys.size());
+        Set<CommandGroup> commandBlockGroupSetBuilder = new ObjectOpenHashSet<>(keys.size());
         for (String commandsID : keys) {
             final ConfigurationSection section = commands.getConfigurationSection("commands." + commandsID);
             BlockType blockType = BlockType.valueOf(section.getString("mode").toUpperCase());
-            boolean blockAliases = section.getBoolean("block_aliases") && blockType.isString(); // Не будет работать с паттернами
+            boolean blockAliases = section.getBoolean("block_aliases") && blockType.isString();
             boolean whitelistMode = section.getBoolean("whitelist_mode");
             List<Condition> conditionList = getConditionList(section.getStringList("conditions"));
             List<Action> actionList = getActionList(section.getStringList("actions"));
@@ -359,13 +357,13 @@ public class Config {
                 break;
             }
         }
-        this.commandBlockGroupSet = commandBlockGroupSetBuilder.build();
+        this.commandBlockGroupSet = commandBlockGroupSetBuilder;
     }
 
     public void setupSymbols(String path) {
         final FileConfiguration symbols = getFile(path, "symbols.yml");
         Set<String> keys = symbols.getConfigurationSection("symbols").getKeys(false);
-        ImmutableSet.Builder<SymbolGroup> symbolBlockGroupSetBuilder = ImmutableSet.builderWithExpectedSize(keys.size());
+        Set<SymbolGroup> symbolBlockGroupSetBuilder = new ObjectOpenHashSet<>(keys.size());
         for (String symbolsID : keys) {
             final ConfigurationSection section = symbols.getConfigurationSection("symbols." + symbolsID);
             BlockType blockType = BlockType.valueOf(section.getString("mode").toUpperCase());
@@ -384,7 +382,7 @@ public class Config {
                     )
             );
         }
-        this.symbolBlockGroupSet = symbolBlockGroupSetBuilder.build();
+        this.symbolBlockGroupSet = symbolBlockGroupSetBuilder;
     }
 
     public List<Action> getChatActions(ConfigurationSection section) {
@@ -416,26 +414,26 @@ public class Config {
         return getActionList(actions);
     }
 
-    private ImmutableList<Action> getActionList(List<String> actionStrings) {
-        ImmutableList.Builder<Action> actionListBuilder = ImmutableList.builderWithExpectedSize(actionStrings.size());
+    private List<Action> getActionList(List<String> actionStrings) {
+        List<Action> actionListBuilder = new ObjectArrayList<>(actionStrings.size());
         for (String actionString : actionStrings) {
             Action action = Action.fromString(actionString);
             if (action != null) {
                 actionListBuilder.add(action);
             }
         }
-        return actionListBuilder.build();
+        return actionListBuilder;
     }
 
-    private ImmutableList<Condition> getConditionList(List<String> conditionStrings) {
-        ImmutableList.Builder<Condition> conditionListBuilder = ImmutableList.builderWithExpectedSize(conditionStrings.size());
+    private List<Condition> getConditionList(List<String> conditionStrings) {
+        List<Condition> conditionListBuilder = new ObjectArrayList<>(conditionStrings.size());
         for (String conditionString : conditionStrings) {
             Condition condition = Condition.fromString(conditionString);
             if (condition != null) {
                 conditionListBuilder.add(condition);
             }
         }
-        return conditionListBuilder.build();
+        return conditionListBuilder;
     }
 
     private Set<BlockFactor> getBlockFactors(String blockFactorString) {
@@ -452,7 +450,7 @@ public class Config {
 
     public void setupExcluded(FileConfiguration config) {
         excludedPlayers = config.getConfigurationSection("settings").getBoolean("enable_excluded_players", false)
-                ? ImmutableSet.copyOf(config.getStringList("excluded_players"))
+                ? Set.copyOf(config.getStringList("excluded_players"))
                 : Set.of();
     }
 

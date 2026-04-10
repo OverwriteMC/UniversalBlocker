@@ -65,16 +65,7 @@
                             <artifact>*:*</artifact>
                             <excludes>
                                 <exclude>META-INF/maven/</exclude>
-                                <exclude>org/jspecify/</exclude>
-                                <exclude>com/google/errorprone/</exclude>
-                                <exclude>com/google/j2objc/</exclude>
                             </excludes>
-                        </filter>
-                        <filter>
-                            <artifact>*:guava</artifact>
-                            <includes>
-                                <include>com/google/common/collect/**</include>
-                            </includes>
                         </filter>
                     </filters>
                     <minimizeJar>true</minimizeJar>
@@ -174,12 +165,6 @@
             <version>RELEASE</version>
             <optional>true</optional>
             <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>com.google.guava</groupId>
-            <artifactId>guava</artifactId>
-            <version>33.5.0-jre</version>
-            <scope>compile</scope>
         </dependency>
         <dependency>
             <groupId>org.testng</groupId>

@@ -2,43 +2,46 @@ package ru.overwrite.ublocker.blockgroups;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
+import it.unimi.dsi.fastutil.objects.ObjectArrayList;
+import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
 import lombok.experimental.UtilityClass;
 
 import java.util.List;
+import java.util.Set;
 import java.util.regex.Pattern;
 
 @UtilityClass
 public class GroupUtils {
 
-    public ImmutableSet<String> createStringSet(List<String> input) {
-        ImmutableSet.Builder<String> builder = ImmutableSet.builderWithExpectedSize(input.size());
+    public Set<String> createStringSet(List<String> input) {
+        Set<String> set = new ObjectOpenHashSet<>(input.size());
         for (String s : input) {
-            builder.add(s.toLowerCase());
+            set.add(s.toLowerCase());
         }
-        return builder.build();
+        return set;
     }
 
-    public ImmutableSet<Pattern> createPatternSet(List<String> input) {
-        ImmutableSet.Builder<Pattern> builder = ImmutableSet.builderWithExpectedSize(input.size());
+    public Set<Pattern> createPatternSet(List<String> input) {
+        Set<Pattern> set = new ObjectOpenHashSet<>(input.size());
         for (String s : input) {
-            builder.add(Pattern.compile(s));
+            set.add(Pattern.compile(s));
         }
-        return builder.build();
+        return set;
     }
 
-    public ImmutableList<String> createStringList(List<String> input) {
-        ImmutableList.Builder<String> builder = ImmutableList.builderWithExpectedSize(input.size());
+    public List<String> createStringList(List<String> input) {
+        List<String> list = new ObjectArrayList<>(input.size());
         for (String s : input) {
-            builder.add(s.toLowerCase());
+            list.add(s.toLowerCase());
         }
-        return builder.build();
+        return list;
     }
 
-    public ImmutableList<Pattern> createPatternList(List<String> input) {
-        ImmutableList.Builder<Pattern> builder = ImmutableList.builderWithExpectedSize(input.size());
+    public List<Pattern> createPatternList(List<String> input) {
+        List<Pattern> list = new ObjectArrayList<>(input.size());
         for (String s : input) {
-            builder.add(Pattern.compile(s));
+            list.add(Pattern.compile(s));
         }
-        return builder.build();
+        return list;
     }
 }
