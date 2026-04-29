@@ -6,7 +6,6 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
-import org.bukkit.event.player.PlayerKickEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import ru.overwrite.ublocker.UniversalBlocker;
 import ru.overwrite.ublocker.configuration.data.SameMessagesSettings;
@@ -112,11 +111,6 @@ public class SameMessageLimiter extends ChatListener {
 
     @EventHandler
     public void onQuit(PlayerQuitEvent e) {
-        sent.remove(e.getPlayer().getName());
-    }
-
-    @EventHandler(ignoreCancelled = true)
-    public void onKick(PlayerKickEvent e) {
         sent.remove(e.getPlayer().getName());
     }
 
