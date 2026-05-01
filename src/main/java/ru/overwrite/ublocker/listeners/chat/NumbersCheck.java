@@ -21,7 +21,7 @@ public class NumbersCheck extends ChatListener {
 
     private static final Pattern IP_PATTERN = Pattern.compile("(\\d+\\.){3}");
 
-    @EventHandler(priority = EventPriority.LOWEST)
+    @EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = true)
     public void onChatNumber(AsyncPlayerChatEvent e) {
         Player p = e.getPlayer();
         if (super.isAdmin(p, "ublocker.bypass.numbers")) {

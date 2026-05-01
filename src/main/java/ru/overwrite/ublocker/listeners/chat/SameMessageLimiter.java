@@ -20,7 +20,7 @@ public class SameMessageLimiter extends ChatListener {
         super(plugin);
     }
 
-    @EventHandler(priority = EventPriority.LOWEST)
+    @EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = true)
     public void onChatSameMessage(AsyncPlayerChatEvent e) {
         Player p = e.getPlayer();
         if (super.isAdmin(p, "ublocker.bypass.samemessage")) {

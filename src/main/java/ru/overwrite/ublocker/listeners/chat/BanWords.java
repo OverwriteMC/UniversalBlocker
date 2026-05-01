@@ -19,7 +19,7 @@ public class BanWords extends ChatListener {
         super(plugin);
     }
 
-    @EventHandler(priority = EventPriority.LOWEST)
+    @EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = true)
     public void onBanWord(AsyncPlayerChatEvent e) {
         Player p = e.getPlayer();
         if (super.isAdmin(p, "ublocker.bypass.banwords")) {
