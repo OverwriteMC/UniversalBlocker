@@ -6,6 +6,7 @@ import org.bukkit.command.Command;
 import org.bukkit.event.Cancellable;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.bukkit.event.server.RemoteServerCommandEvent;
 import org.bukkit.event.server.ServerCommandEvent;
 import ru.overwrite.ublocker.UniversalBlocker;
 import ru.overwrite.ublocker.actions.Action;
@@ -37,6 +38,7 @@ public class ConsoleBlocker implements Listener {
             e.setCancelled(true);
             return;
         }
+        boolean checkRcon = e instanceof RemoteServerCommandEvent;
         String command = e.getCommand().toLowerCase();
         outer:
         for (CommandGroup group : pluginConfig.getCommandBlockGroupSet()) {
@@ -48,13 +50,13 @@ public class ConsoleBlocker implements Listener {
             }
             switch (group.blockType()) {
                 case STRING: {
-                    if (checkStringBlock(e, command, group)) {
+                    if (checkStringBlock(e, command, group, checkRcon)) {
                         break outer;
                     }
                     break;
                 }
                 case PATTERN: {
-                    if (checkPatternBlock(e, command, group)) {
+                    if (checkPatternBlock(e, command, group, checkRcon)) {
                         break outer;
                     }
                     break;
@@ -63,7 +65,7 @@ public class ConsoleBlocker implements Listener {
         }
     }
 
-    private boolean checkStringBlock(ServerCommandEvent e, String command, CommandGroup group) {
+    private boolean checkStringBlock(ServerCommandEvent e, String command, CommandGroup group, boolean checkRcon) {
         String executedCommandBase = Utils.cutCommand(command);
         Command comInMap = group.blockAliases() ? Bukkit.getCommandMap().getCommand(executedCommandBase) : null;
         List<String> aliases = comInMap != null ? comInMap.getAliases() : List.of();
@@ -79,13 +81,13 @@ public class ConsoleBlocker implements Listener {
         }
         boolean check = group.whitelistMode() != matched;
         if (check) {
-            executeActions(e, command, executedCommandBase, group.actionsToExecute());
+            executeActions(e, command, executedCommandBase, group.actionsToExecute(), checkRcon);
             return true;
         }
         return false;
     }
 
-    private boolean checkPatternBlock(ServerCommandEvent e, String command, CommandGroup group) {
+    private boolean checkPatternBlock(ServerCommandEvent e, String command, CommandGroup group, boolean checkRcon) {
         String executedCommandBase = Utils.cutCommand(command);
         Matcher matchedMatcher = null;
         for (Pattern pattern : group.commandsToBlockPattern()) {
@@ -98,7 +100,7 @@ public class ConsoleBlocker implements Listener {
         boolean matched = matchedMatcher != null;
         boolean check = group.whitelistMode() != matched;
         if (check) {
-            executeActions(e, command, matched ? matchedMatcher.group() : executedCommandBase, group.actionsToExecute());
+            executeActions(e, command, matched ? matchedMatcher.group() : executedCommandBase, group.actionsToExecute(), checkRcon);
             return true;
         }
         return false;
@@ -106,15 +108,16 @@ public class ConsoleBlocker implements Listener {
 
     private static final String[] searchList = {"%player%", "%command%", "%msg%"};
 
-    public void executeActions(Cancellable e, String fullCommand, String baseCommand, ObjectList<Action> actions) {
-        Utils.printDebug(() -> "Starting executing actions for rcon and blocked command '" + baseCommand + "'", Utils.DEBUG_COMMANDS);
+    public void executeActions(Cancellable e, String fullCommand, String baseCommand, ObjectList<Action> actions, boolean checkRcon) {
+        Utils.printDebug(() -> "Starting executing actions for console/rcon and blocked command '" + baseCommand + "'", Utils.DEBUG_COMMANDS);
         final String[] replacementList = {"CONSOLE", baseCommand, fullCommand};
 
+        ActionType checkType = checkRcon ? ActionType.BLOCK_RCON : ActionType.BLOCK_CONSOLE;
         for (Action action : actions) {
             ActionType type = action.type();
 
-            if (type == ActionType.BLOCK_CONSOLE) {
-                Utils.printDebug(() -> "Command event blocked for rcon", Utils.DEBUG_COMMANDS);
+            if (type == checkType) {
+                Utils.printDebug(() -> "Command event blocked for console/rcon", Utils.DEBUG_COMMANDS);
                 e.setCancelled(true);
             }
 

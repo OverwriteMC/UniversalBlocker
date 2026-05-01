@@ -28,10 +28,11 @@ public class ConsoleSymbolBlocker extends SymbolBlocker {
     public void onCommand(ServerCommandEvent e) {
         String command = e.getCommand().toLowerCase();
         boolean checkRcon = e instanceof RemoteServerCommandEvent;
+        BlockFactor checkType = checkRcon ? BlockFactor.RCON_COMMAND : BlockFactor.CONSOLE_COMMAND;
         outer:
         for (SymbolGroup group : pluginConfig.getSymbolBlockGroupSet()) {
             Utils.printDebug(() -> "Group checking now: " + group.groupId(), Utils.DEBUG_SYMBOLS);
-            if (group.blockFactor().isEmpty() || !group.blockFactor().contains(checkRcon ? BlockFactor.RCON_COMMAND : BlockFactor.CONSOLE_COMMAND)) {
+            if (group.blockFactor().isEmpty() || !group.blockFactor().contains(checkType)) {
                 Utils.printDebug(() -> "Group " + group.groupId() + " does not have 'console_command' or 'rcon_command' block factor. Skipping...", Utils.DEBUG_SYMBOLS);
                 continue;
             }
