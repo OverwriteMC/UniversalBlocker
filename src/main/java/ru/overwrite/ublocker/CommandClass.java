@@ -42,7 +42,7 @@ public class CommandClass implements TabExecutor {
         if (args.length == 0) {
             sender.sendMessage("§6/" + label + " reload - перезагрузить конфиг");
             sender.sendMessage("§6/" + label + " debug <chat|commands|symbols> - включить дебаг");
-            sender.sendMessage("§6/" + label + " lock <commands|console|rcon> - отключить выбранный тип команд");
+            sender.sendMessage("§6/" + label + " lock <commands|console> - отключить выбранный тип команд");
             return true;
         }
         switch (args[0].toLowerCase()) {
@@ -160,7 +160,6 @@ public class CommandClass implements TabExecutor {
                 if (args.length == 2) {
                     completions.add("commands");
                     completions.add("console");
-                    completions.add("rcon");
                 }
                 break;
             }
