@@ -15,7 +15,10 @@ import org.bukkit.plugin.messaging.Messenger;
 import ru.overwrite.ublocker.color.ColorizerProvider;
 import ru.overwrite.ublocker.configuration.Config;
 import ru.overwrite.ublocker.listeners.chat.*;
-import ru.overwrite.ublocker.listeners.commands.*;
+import ru.overwrite.ublocker.listeners.commands.CommandBlocker;
+import ru.overwrite.ublocker.listeners.commands.CommandHider;
+import ru.overwrite.ublocker.listeners.commands.ConsoleBlocker;
+import ru.overwrite.ublocker.listeners.commands.TabComplete;
 import ru.overwrite.ublocker.listeners.symbols.*;
 import ru.overwrite.ublocker.logging.Logger;
 import ru.overwrite.ublocker.logging.impl.BukkitLogger;
@@ -176,7 +179,6 @@ public final class UniversalBlocker extends JavaPlugin {
             pluginConfig.setupCommands(path);
             pm.registerEvents(new CommandBlocker(this), this);
             pm.registerEvents(new ConsoleBlocker(this), this);
-            pm.registerEvents(new RconBlocker(this), this);
             pm.registerEvents(new TabComplete(this), this);
             pm.registerEvents(new CommandHider(this), this);
         }

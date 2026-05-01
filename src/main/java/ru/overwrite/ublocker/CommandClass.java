@@ -17,7 +17,6 @@ import ru.overwrite.ublocker.configuration.Config;
 import ru.overwrite.ublocker.listeners.chat.ChatListener;
 import ru.overwrite.ublocker.listeners.commands.CommandBlocker;
 import ru.overwrite.ublocker.listeners.commands.ConsoleBlocker;
-import ru.overwrite.ublocker.listeners.commands.RconBlocker;
 import ru.overwrite.ublocker.utils.Utils;
 
 import java.util.List;
@@ -90,8 +89,6 @@ public class CommandClass implements TabExecutor {
                             toggleFeature("Блокировка команд для", "игроков", CommandBlocker.FULL_LOCK, v -> CommandBlocker.FULL_LOCK = v, sender);
                     case "console" ->
                             toggleFeature("Блокировка команд для", "консоли", ConsoleBlocker.FULL_LOCK, v -> ConsoleBlocker.FULL_LOCK = v, sender);
-                    case "rcon" ->
-                            toggleFeature("Блокировка команд для", "ркона", RconBlocker.FULL_LOCK, v -> RconBlocker.FULL_LOCK = v, sender);
                     default -> {
                         sender.sendMessage("§cUniversalBlocker §7> §6Неизвестный тип блокировки! Доступные: commands, console, rcon");
                         return false;
