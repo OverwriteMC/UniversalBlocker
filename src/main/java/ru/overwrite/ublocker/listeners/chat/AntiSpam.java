@@ -11,64 +11,70 @@ import ru.overwrite.ublocker.configuration.data.AntiSpamSettings;
 import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.concurrent.atomic.AtomicLong;
 
 public class AntiSpam extends ChatListener {
 
-    private final Map<UUID, Long> lastMessageTime = new ConcurrentHashMap<>();
-    private static final String[] searchList = {"%player%", "%cooldown%", "%time_left%", "%msg%"};
+    private static final String[] SEARCH = {
+            "%player%",
+            "%cooldown%",
+            "%time_left%",
+            "%msg%"
+    };
+
+    private final AntiSpamSettings settings;
+    private final Map<UUID, Long> cooldowns = new ConcurrentHashMap<>();
 
     public AntiSpam(UniversalBlocker plugin) {
         super(plugin);
+        this.settings = pluginConfig.getAntiSpamSettings();
     }
 
     @EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = true)
     public void onChatSpam(AsyncPlayerChatEvent e) {
-        Player p = e.getPlayer();
-        if (super.isAdmin(p, "ublocker.bypass.antispam")) {
-            return;
-        }
+        long cooldown = settings.cooldown();
 
-        AntiSpamSettings antiSpamSettings = pluginConfig.getAntiSpamSettings();
-        long cooldown = antiSpamSettings.cooldown();
         if (cooldown <= 0) {
             return;
         }
 
-        long now = System.currentTimeMillis();
-        UUID uuid = p.getUniqueId();
-        AtomicBoolean blocked = new AtomicBoolean();
-        AtomicLong remainingCooldown = new AtomicLong();
-        lastMessageTime.compute(uuid, (key, previousMessageTime) -> {
-            if (previousMessageTime == null) {
-                return now;
-            }
+        Player player = e.getPlayer();
 
-            long timeLeft = cooldown - (now - previousMessageTime);
-            if (timeLeft > 0) {
-                blocked.set(true);
-                remainingCooldown.set(timeLeft);
-                return previousMessageTime;
-            }
-
-            return now;
-        });
-
-        if (blocked.get()) {
-            e.setCancelled(true);
-            String[] replacementList = {
-                    p.getName(),
-                    Long.toString(cooldown),
-                    Long.toString(remainingCooldown.get()),
-                    e.getMessage()
-            };
-            super.executeActions(p, searchList, replacementList, antiSpamSettings.actionsToExecute());
+        if (isAdmin(player, "ublocker.bypass.antispam")) {
+            return;
         }
+
+        UUID uuid = player.getUniqueId();
+        long now = System.currentTimeMillis();
+
+        Long lastMessageTime = cooldowns.get(uuid);
+
+        if (lastMessageTime != null) {
+            long timeLeft = cooldown - (now - lastMessageTime);
+
+            if (timeLeft > 0) {
+                e.setCancelled(true);
+
+                executeActions(
+                        player,
+                        SEARCH,
+                        new String[]{
+                                player.getName(),
+                                Long.toString(cooldown),
+                                Long.toString(timeLeft),
+                                e.getMessage()
+                        },
+                        settings.actionsToExecute()
+                );
+
+                return;
+            }
+        }
+
+        cooldowns.put(uuid, now);
     }
 
     @EventHandler
     public void onQuit(PlayerQuitEvent e) {
-        lastMessageTime.remove(e.getPlayer().getUniqueId());
+        cooldowns.remove(e.getPlayer().getUniqueId());
     }
 }
