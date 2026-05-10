@@ -19,5 +19,6 @@ permissions:
       ublocker.bypass.numbers: true
       ublocker.bypass.commands: true
       ublocker.bypass.symbols: true
+      ublocker.bypass.antispam: true
       ublocker.bypass.samemessage: true
       ublocker.bypass.case: true

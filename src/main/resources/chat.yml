@@ -100,6 +100,20 @@ chat_settings:
       - '[SOUND] ENTITY_ITEM_BREAK;1.0;1.0'
       - '[NOTIFY] &7&l(&c&l!&7&l) &cИгрок &3%player% &cпревысили процент капса в сообщении hoverText={&7Сообщение игрока: &c%msg%} perm={ublocker.notify.caps}'
       - '[NOTIFY_SOUND] BLOCK_NOTE_BLOCK_PLING;1.0;1.0 perm={ublocker.notify.caps}'
+  # Basic chat anti-spam cooldown in milliseconds
+  # Placeholders:
+  ## %cooldown% - configured cooldown in milliseconds
+  ## %time_left% - remaining cooldown in milliseconds
+  ## %msg% - full message
+  ## %player% - violating player
+  anti_spam:
+    enable: true
+    cooldown: 1500
+    actions:
+      - '[MESSAGE] &7&l(&c&l!&7&l) &cНе спамьте. Подождите &e%time_left%мс &cперед отправкой следующего сообщения.'
+      - '[SOUND] ENTITY_ITEM_BREAK;1.0;1.0'
+      - '[NOTIFY] &7&l(&c&l!&7&l) &cИгрок &3%player% &cпытался заспамить чат. hoverText={&7Сообщение: &c%msg%} perm={ublocker.notify.spam}'
+      - '[NOTIFY_SOUND] BLOCK_NOTE_BLOCK_PLING;1.0;1.0 perm={ublocker.notify.spam}'
   # Лимитёр однотипных сообщений
   # Плейсхолдеры:
   ## %msg% - полное сообщение

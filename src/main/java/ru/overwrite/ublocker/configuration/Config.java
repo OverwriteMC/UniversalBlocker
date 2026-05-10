@@ -55,6 +55,7 @@ public class Config {
         setupCommandChars(settings.getConfigurationSection("allowed_command_chars"));
         setupNumberCheck(settings.getConfigurationSection("numbers_check"));
         setupCaseCheck(settings.getConfigurationSection("case_check"));
+        setupAntiSpam(settings.getConfigurationSection("anti_spam"));
         setupSameMessages(settings.getConfigurationSection("same_messages"));
         setupBanWords(settings.getConfigurationSection("ban_words_chat"));
     }
@@ -248,6 +249,31 @@ public class Config {
     }
 
     private SameMessagesSettings sameMessagesSettings;
+
+    private AntiSpamSettings antiSpamSettings;
+
+    private void setupAntiSpam(ConfigurationSection antiSpam) {
+        if (isNullSection(antiSpam)) {
+            return;
+        }
+
+        ChatListener chatListener = plugin.getChatListeners().get(AntiSpam.class.getSimpleName());
+
+        boolean shouldBeRegistered = antiSpam.getBoolean("enable");
+
+        if (chatListener.isRegistered() != shouldBeRegistered) {
+            chatListener.setRegistered(shouldBeRegistered);
+        }
+
+        long cooldown = antiSpam.getLong("cooldown", 1500L);
+
+        ObjectList<Action> actionList = getChatActions(antiSpam);
+
+        this.antiSpamSettings = new AntiSpamSettings(
+                cooldown,
+                actionList
+        );
+    }
 
     private void setupSameMessages(ConfigurationSection sameMessages) {
         if (isNullSection(sameMessages)) {

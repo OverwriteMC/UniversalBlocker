@@ -192,6 +192,7 @@ public final class UniversalBlocker extends JavaPlugin {
             chatListeners.put(CommandFilter.class.getSimpleName(), new CommandFilter(this));
             chatListeners.put(NumbersCheck.class.getSimpleName(), new NumbersCheck(this));
             chatListeners.put(CaseCheck.class.getSimpleName(), new CaseCheck(this));
+            chatListeners.put(AntiSpam.class.getSimpleName(), new AntiSpam(this));
             chatListeners.put(SameMessageLimiter.class.getSimpleName(), new SameMessageLimiter(this));
             chatListeners.put(BanWords.class.getSimpleName(), new BanWords(this));
         }
