@@ -21,16 +21,15 @@ public class AntiSpam extends ChatListener {
             "%msg%"
     };
 
-    private final AntiSpamSettings settings;
     private final Map<UUID, Long> cooldowns = new ConcurrentHashMap<>();
 
     public AntiSpam(UniversalBlocker plugin) {
         super(plugin);
-        this.settings = pluginConfig.getAntiSpamSettings();
     }
 
     @EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = true)
     public void onChatSpam(AsyncPlayerChatEvent e) {
+        AntiSpamSettings settings = pluginConfig.getAntiSpamSettings();
         long cooldown = settings.cooldown();
 
         if (cooldown <= 0) {
