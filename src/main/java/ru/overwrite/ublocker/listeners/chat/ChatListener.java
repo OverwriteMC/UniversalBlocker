@@ -118,10 +118,7 @@ public abstract class ChatListener implements Listener {
     }
 
     private void executeConsoleCommand(Player p, Action action) {
-        runner.run(() -> Bukkit.dispatchCommand(
-                Bukkit.getConsoleSender(),
-                action.context().replace("%player%", p.getName())
-        ));
+        runner.run(() -> Bukkit.dispatchCommand(Bukkit.getConsoleSender(), action.context().replace("%player%", p.getName())));
     }
 
     private void logAction(Action action, String[] searchList, String[] replacementList) {
