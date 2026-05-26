@@ -22,7 +22,7 @@ public class AnvilBlocker extends SymbolBlocker {
 
     @EventHandler
     public void onAnvilClick(InventoryClickEvent e) {
-        if (e.getInventory().getType() != InventoryType.ANVIL || e.getSlot() != 2) {
+        if (e.getInventory().getType() != InventoryType.ANVIL || e.getRawSlot() != 2) {
             return;
         }
         Player p = (Player) e.getWhoClicked();
