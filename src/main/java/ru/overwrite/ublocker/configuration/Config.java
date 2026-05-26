@@ -300,7 +300,11 @@ public class Config {
         BlockType mode = BlockType.valueOf(banWords.getString("mode").toUpperCase());
         ObjectSet<String> banWordsString = null;
         ObjectSet<Pattern> banWordsPattern = null;
-        List<String> banWordsList = banWords.getStringList("words");
+        List<String> rawBanWordsList = banWords.getStringList("words");
+        List<String> banWordsList = new ObjectArrayList<>(rawBanWordsList.size());
+        for (String banword : rawBanWordsList) {
+            banWordsList.add(banword.toLowerCase());
+        }
         switch (mode) {
             case STRING:
                 banWordsString = new ObjectOpenHashSet<>(banWordsList);
