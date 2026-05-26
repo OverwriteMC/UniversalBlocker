@@ -1,7 +1,7 @@
 package ru.overwrite.ublocker.configuration;
 
-import it.unimi.dsi.fastutil.chars.CharOpenHashSet;
-import it.unimi.dsi.fastutil.chars.CharSet;
+import it.unimi.dsi.fastutil.ints.IntOpenHashSet;
+import it.unimi.dsi.fastutil.ints.IntSet;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import it.unimi.dsi.fastutil.objects.ObjectList;
 import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
@@ -75,10 +75,10 @@ public class Config {
         }
 
         BlockType mode = BlockType.valueOf(allowedChars.getString("mode").toUpperCase());
-        CharSet charSet = null;
+        IntSet charSet = null;
         Pattern pattern = null;
         switch (mode) {
-            case STRING -> charSet = new CharOpenHashSet(allowedChars.getString("pattern").toCharArray());
+            case STRING -> charSet = getAllowedChars(allowedChars.getString("pattern"));
             case PATTERN -> pattern = Pattern.compile(allowedChars.getString("pattern"));
         }
 
@@ -108,10 +108,10 @@ public class Config {
         }
 
         BlockType mode = BlockType.valueOf(allowedBookChars.getString("mode").toUpperCase());
-        CharSet charSet = null;
+        IntSet charSet = null;
         Pattern pattern = null;
         switch (mode) {
-            case STRING -> charSet = new CharOpenHashSet(allowedBookChars.getString("pattern").toCharArray());
+            case STRING -> charSet = getAllowedChars(allowedBookChars.getString("pattern"));
             case PATTERN -> pattern = Pattern.compile(allowedBookChars.getString("pattern"));
         }
 
@@ -141,10 +141,10 @@ public class Config {
         }
 
         BlockType mode = BlockType.valueOf(allowedSignChars.getString("mode").toUpperCase());
-        CharSet charSet = null;
+        IntSet charSet = null;
         Pattern pattern = null;
         switch (mode) {
-            case STRING -> charSet = new CharOpenHashSet(allowedSignChars.getString("pattern").toCharArray());
+            case STRING -> charSet = getAllowedChars(allowedSignChars.getString("pattern"));
             case PATTERN -> pattern = Pattern.compile(allowedSignChars.getString("pattern"));
         }
 
@@ -174,10 +174,10 @@ public class Config {
         }
 
         BlockType mode = BlockType.valueOf(allowedCommandChars.getString("mode").toUpperCase());
-        CharSet charSet = null;
+        IntSet charSet = null;
         Pattern pattern = null;
         switch (mode) {
-            case STRING -> charSet = new CharOpenHashSet(allowedCommandChars.getString("pattern").toCharArray());
+            case STRING -> charSet = getAllowedChars(allowedCommandChars.getString("pattern"));
             case PATTERN -> pattern = Pattern.compile(allowedCommandChars.getString("pattern"));
         }
 
@@ -189,6 +189,16 @@ public class Config {
                 pattern,
                 actionList
         );
+    }
+
+    private IntSet getAllowedChars(String allowed) {
+        IntSet chars = new IntOpenHashSet();
+        for (int i = 0, length = allowed.length(); i < length; ) {
+            int codePoint = allowed.codePointAt(i);
+            chars.add(codePoint);
+            i += Character.charCount(codePoint);
+        }
+        return chars;
     }
 
     private NumberCheckSettings numberCheckSettings;

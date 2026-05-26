@@ -1,6 +1,6 @@
 package ru.overwrite.ublocker.listeners.chat;
 
-import it.unimi.dsi.fastutil.chars.CharSet;
+import it.unimi.dsi.fastutil.ints.IntSet;
 import it.unimi.dsi.fastutil.objects.ObjectList;
 import lombok.Getter;
 import lombok.Setter;
@@ -17,6 +17,7 @@ import ru.overwrite.ublocker.configuration.Config;
 import ru.overwrite.ublocker.task.runner.Runner;
 import ru.overwrite.ublocker.utils.Utils;
 
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public abstract class ChatListener implements Listener {
@@ -35,27 +36,34 @@ public abstract class ChatListener implements Listener {
         this.runner = plugin.getRunner();
     }
 
-    protected String getFirstBlockedChar(String str, CharSet charSet) {
-        for (int i = 0, length = str.length(); i < length; ++i) {
-            char c = str.charAt(i);
-            if (!charSet.contains(c)) {
-                return Character.toString(c);
+    protected String getFirstBlockedChar(String str, IntSet charSet) {
+        for (int i = 0, length = str.length(); i < length; ) {
+            int codePoint = str.codePointAt(i);
+            int charCount = Character.charCount(codePoint);
+
+            if (!charSet.contains(codePoint)) {
+                return str.substring(i, i + charCount);
             }
+
+            i += charCount;
         }
         return null;
     }
 
     protected String getFirstBlockedChar(String str, Pattern pattern) {
+        Matcher matcher = pattern.matcher(str);
         for (int i = 0, length = str.length(); i < length; ) {
             int codePoint = str.codePointAt(i);
             int charCount = Character.charCount(codePoint);
-            String symbol = str.substring(i, i + charCount);
+            int end = i + charCount;
 
-            if (!pattern.matcher(symbol).matches()) {
-                return symbol;
+            matcher.region(i, end);
+
+            if (!matcher.matches()) {
+                return str.substring(i, end);
             }
 
-            i += charCount;
+            i = end;
         }
         return null;
     }
