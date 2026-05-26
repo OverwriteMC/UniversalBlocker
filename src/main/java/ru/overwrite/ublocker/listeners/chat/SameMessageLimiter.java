@@ -1,19 +1,22 @@
 package ru.overwrite.ublocker.listeners.chat;
 
-import it.unimi.dsi.fastutil.objects.Reference2ObjectMap;
-import it.unimi.dsi.fastutil.objects.Reference2ObjectOpenHashMap;
+import it.unimi.dsi.fastutil.objects.Object2ObjectMap;
+import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
+import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import ru.overwrite.ublocker.UniversalBlocker;
 import ru.overwrite.ublocker.configuration.data.SameMessagesSettings;
+import ru.overwrite.ublocker.task.task.Task;
 import ru.overwrite.ublocker.utils.Utils;
 
 public class SameMessageLimiter extends ChatListener {
 
-    private final Reference2ObjectMap<String, Buffer> sent = new Reference2ObjectOpenHashMap<>();
+    private final Object2ObjectMap<String, Task> historyClearTimers = new Object2ObjectOpenHashMap<>();
+    private final Object2ObjectMap<String, Buffer> sent = new Object2ObjectOpenHashMap<>();
     private static final String[] searchList = {"%player%", "%msg%"};
 
     public SameMessageLimiter(UniversalBlocker plugin) {
@@ -110,8 +113,26 @@ public class SameMessageLimiter extends ChatListener {
     }
 
     @EventHandler
+    public void onJoin(PlayerJoinEvent e) {
+        String playerName = e.getPlayer().getName();
+        Task task = historyClearTimers.get(playerName);
+        if (task != null) {
+            task.cancel();
+        }
+    }
+
+    @EventHandler
     public void onQuit(PlayerQuitEvent e) {
-        sent.remove(e.getPlayer().getName());
+        String playerName = e.getPlayer().getName();
+        SameMessagesSettings sameMessagesSettings = pluginConfig.getSameMessagesSettings();
+        Task task = runner.runDelayed(
+                () -> {
+                    sent.remove(playerName);
+                    historyClearTimers.remove(playerName);
+                },
+                sameMessagesSettings.historyClearAfterQuit()
+        );
+        historyClearTimers.put(playerName, task);
     }
 
     private static final class Buffer {

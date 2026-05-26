@@ -266,6 +266,7 @@ public class Config {
         int maxSameMessage = sameMessages.getInt("max_same_message", 2);
         int minMessageLength = sameMessages.getInt("min_message_length", 3);
         int historySize = sameMessages.getInt("history_size", 10);
+        long historyClearAfterQuit = sameMessages.getLong("history_clear_after_quit", 60);
         boolean stripColor = sameMessages.getBoolean("strip_color");
 
         ObjectList<Action> actionList = getChatActions(sameMessages);
@@ -275,6 +276,7 @@ public class Config {
                 maxSameMessage,
                 minMessageLength,
                 historySize,
+                historyClearAfterQuit,
                 stripColor,
                 actionList
         );
