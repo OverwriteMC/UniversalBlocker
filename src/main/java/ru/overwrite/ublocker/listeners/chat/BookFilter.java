@@ -15,7 +15,7 @@ public class BookFilter extends ChatListener {
         super(plugin);
     }
 
-    @EventHandler(priority = EventPriority.LOWEST)
+    @EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = true)
     public void onBookEvent(PlayerEditBookEvent e) {
         Player p = e.getPlayer();
         if (super.isAdmin(p, "ublocker.bypass.bookchars")) {

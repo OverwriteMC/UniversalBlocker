@@ -15,7 +15,7 @@ public class CommandFilter extends ChatListener {
         super(plugin);
     }
 
-    @EventHandler(priority = EventPriority.LOWEST)
+    @EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = true)
     public void onCommandMessage(PlayerCommandPreprocessEvent e) {
         Player p = e.getPlayer();
         if (super.isAdmin(p, "ublocker.bypass.commandchars")) {
@@ -29,7 +29,7 @@ public class CommandFilter extends ChatListener {
         };
         if (blockedChar != null) {
             e.setCancelled(true);
-            String[] replacementList = {p.getName(), blockedChar};
+            String[] replacementList = {p.getName(), blockedChar, message};
             super.executeActions(p, searchList, replacementList, commandCharsSettings.actionsToExecute());
         }
     }

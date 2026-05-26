@@ -15,7 +15,7 @@ public class SignFilter extends ChatListener {
         super(plugin);
     }
 
-    @EventHandler(priority = EventPriority.LOWEST)
+    @EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = true)
     public void onSignMessage(SignChangeEvent e) {
         Player p = e.getPlayer();
         if (super.isAdmin(p, "ublocker.bypass.signchars")) {
