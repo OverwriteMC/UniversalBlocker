@@ -34,9 +34,12 @@ public class BanWords extends ChatListener {
         switch (banWordsSettings.mode()) {
             case STRING: {
                 for (String banword : banWordsSettings.banWordsString()) {
-                    if (message.contains(banword)) {
-                        blockBanWord(p, banword, rawMessage, e, banWordsSettings);
-                        return;
+                    int start = message.indexOf(banword);
+                    if (start != -1) {
+                        blockBanWord(p, banword, rawMessage, start, start + banword.length(), e, banWordsSettings);
+                        if (banWordsSettings.strict()) {
+                            return;
+                        }
                     }
                 }
                 break;
@@ -45,8 +48,10 @@ public class BanWords extends ChatListener {
                 for (Pattern banword : banWordsSettings.banWordsPattern()) {
                     Matcher matcher = banword.matcher(message);
                     if (matcher.find()) {
-                        blockBanWord(p, matcher.group(), rawMessage, e, banWordsSettings);
-                        return;
+                        blockBanWord(p, matcher.group(), rawMessage, matcher.start(), matcher.end(), e, banWordsSettings);
+                        if (banWordsSettings.strict()) {
+                            return;
+                        }
                     }
                 }
                 break;
@@ -54,7 +59,7 @@ public class BanWords extends ChatListener {
         }
     }
 
-    private void blockBanWord(Player p, String banword, String rawMessage, AsyncPlayerChatEvent e, BanWordsSettings banWordsSettings) {
+    private void blockBanWord(Player p, String banword, String rawMessage, int start, int end, AsyncPlayerChatEvent e, BanWordsSettings banWordsSettings) {
         if (banWordsSettings.strict()) {
             e.setCancelled(true);
             String[] replacementList = {p.getName(), banword, rawMessage};
@@ -62,7 +67,7 @@ public class BanWords extends ChatListener {
             return;
         }
         Utils.printDebug(() -> "Censored word " + banword, Utils.DEBUG_CHAT);
-        String censored = banWordsSettings.censorSymbol().repeat(banword.length());
-        e.setMessage(rawMessage.replace(banword, censored));
+        String censored = banWordsSettings.censorSymbol().repeat(end - start);
+        e.setMessage(rawMessage.substring(0, start) + censored + rawMessage.substring(end));
     }
 }
