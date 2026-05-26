@@ -172,7 +172,7 @@ public abstract class SymbolBlocker implements Listener {
                     .forEach(player -> player.sendMessage(component));
 
             if (plugin.getPluginMessage() != null) {
-                String gsonMessage = GsonComponentSerializer.gson().serializer().toJsonTree(component).toString();
+                String gsonMessage = GsonComponentSerializer.gson().serialize(component);
                 plugin.getPluginMessage().sendCrossProxyPerm(p, perm + " " + gsonMessage);
             }
         });
