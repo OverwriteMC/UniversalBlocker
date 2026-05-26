@@ -23,7 +23,7 @@ public abstract class ChatListener implements Listener {
 
     protected final UniversalBlocker plugin;
     protected final Config pluginConfig;
-    private final Runner runner;
+    protected final Runner runner;
 
     @Getter
     @Setter
