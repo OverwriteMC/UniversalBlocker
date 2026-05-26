@@ -19,7 +19,7 @@ public class NumbersCheck extends ChatListener {
         super(plugin);
     }
 
-    private static final Pattern IP_PATTERN = Pattern.compile("(\\d+\\.){3}");
+    private static final Pattern IP_PATTERN = Pattern.compile("(?<![\\d.])\\d{1,3}(?:\\.\\d{1,3}){3}(?![\\d.])");
 
     @EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = true)
     public void onChatNumber(AsyncPlayerChatEvent e) {
@@ -48,8 +48,11 @@ public class NumbersCheck extends ChatListener {
         } else {
             Matcher matcher = IP_PATTERN.matcher(message);
             int digitsCount = 0;
-
             while (matcher.find()) {
+                String ip = matcher.group();
+                if (!isValidIp(ip)) {
+                    continue;
+                }
                 for (int i = matcher.start(), j = matcher.end(); i < j; i++) {
                     char c = message.charAt(i);
                     if (c >= '0' && c <= '9') {
@@ -63,5 +66,22 @@ public class NumbersCheck extends ChatListener {
                 super.executeActions(p, searchList, replacementList, numberCheckSettings.actionsToExecute());
             }
         }
+    }
+
+    private boolean isValidIp(String ip) {
+        int value = 0;
+        for (int i = 0, length = ip.length(); i < length; i++) {
+            char c = ip.charAt(i);
+
+            if (c == '.') {
+                if (value > 255) {
+                    return false;
+                }
+                value = 0;
+                continue;
+            }
+            value = value * 10 + c - '0';
+        }
+        return value <= 255;
     }
 }
