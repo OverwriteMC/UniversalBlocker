@@ -371,9 +371,6 @@ public class Config {
                             actionList
                     )
             );
-            if (blockType != BlockType.STRING) {
-                break;
-            }
         }
         this.commandBlockGroupSet = commandBlockGroupSetBuilder;
     }
