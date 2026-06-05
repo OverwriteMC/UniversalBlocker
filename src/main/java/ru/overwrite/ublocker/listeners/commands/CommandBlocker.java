@@ -273,16 +273,11 @@ public class CommandBlocker implements Listener {
     }
 
     private boolean hasArguments(String command) {
-        return command.split(" ").length > 1;
+        return command.trim().indexOf(' ') != -1;
     }
 
     // В новых версиях нет нормализации пробелов на сервер сайде, таким образом игрок может спокойно обойти любые блокировки
     private boolean hasTwoConsecutiveSpaces(String str) {
-        for (int i = 0; i < str.length() - 1; i++) {
-            if (str.charAt(i) == ' ' && str.charAt(i + 1) == ' ') {
-                return true;
-            }
-        }
-        return false;
+        return str.contains("  "); // блять нахуй я старую логику придумал
     }
 }
