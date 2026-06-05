@@ -46,149 +46,45 @@ public class Config {
 
     private Set<String> excludedPlayers;
 
+    private CharsSettings chatCharsSettings;
+    private CharsSettings bookCharsSettings;
+    private CharsSettings signCharsSettings;
+    private CharsSettings commandCharsSettings;
+    private NumberCheckSettings numberCheckSettings;
+    private CaseCheckSettings caseCheckSettings;
+    private SameMessagesSettings sameMessagesSettings;
+    private BanWordsSettings banWordsSettings;
+
     public void setupChat(String path) {
         final FileConfiguration chat = getFile(path, "chat.yml");
         final ConfigurationSection settings = chat.getConfigurationSection("chat_settings");
-        setupChatChars(settings.getConfigurationSection("allowed_chat_chars"));
-        setupBookChars(settings.getConfigurationSection("allowed_book_chars"));
-        setupSignChars(settings.getConfigurationSection("allowed_sign_chars"));
-        setupCommandChars(settings.getConfigurationSection("allowed_command_chars"));
-        setupNumberCheck(settings.getConfigurationSection("numbers_check"));
-        setupCaseCheck(settings.getConfigurationSection("case_check"));
-        setupSameMessages(settings.getConfigurationSection("same_messages"));
-        setupBanWords(settings.getConfigurationSection("ban_words_chat"));
+        this.chatCharsSettings = setupCharsSettings(settings.getConfigurationSection("allowed_chat_chars"), ChatFilter.class.getSimpleName());
+        this.bookCharsSettings = setupCharsSettings(settings.getConfigurationSection("allowed_book_chars"), BookFilter.class.getSimpleName());
+        this.signCharsSettings = setupCharsSettings(settings.getConfigurationSection("allowed_sign_chars"), SignFilter.class.getSimpleName());
+        this.commandCharsSettings = setupCharsSettings(settings.getConfigurationSection("allowed_command_chars"), CommandFilter.class.getSimpleName());
+        this.numberCheckSettings = setupNumberCheck(settings.getConfigurationSection("numbers_check"));
+        this.caseCheckSettings = setupCaseCheck(settings.getConfigurationSection("case_check"));
+        this.sameMessagesSettings = setupSameMessages(settings.getConfigurationSection("same_messages"));
+        this.banWordsSettings = setupBanWords(settings.getConfigurationSection("ban_words_chat"));
     }
 
-    private ChatCharsSettings chatCharsSettings;
-
-    private void setupChatChars(ConfigurationSection allowedChars) {
+    private CharsSettings setupCharsSettings(ConfigurationSection allowedChars, String listenerKey) {
         if (isNullSection(allowedChars)) {
-            return;
+            return null;
         }
-
-        ChatListener chatListener = plugin.getChatListeners().get(ChatFilter.class.getSimpleName());
-
-        boolean shouldBeRegistered = allowedChars.getBoolean("enable");
-
-        if (chatListener.isRegistered() != shouldBeRegistered) {
-            chatListener.setRegistered(shouldBeRegistered);
-        }
-
-        BlockType mode = BlockType.valueOf(allowedChars.getString("mode").toUpperCase());
-        IntSet charSet = null;
-        Pattern pattern = null;
-        switch (mode) {
-            case STRING -> charSet = getAllowedChars(allowedChars.getString("pattern"));
-            case PATTERN -> pattern = Pattern.compile(allowedChars.getString("pattern"));
-        }
-
-        ObjectList<Action> actionList = getChatActions(allowedChars);
-
-        this.chatCharsSettings = new ChatCharsSettings(
-                mode,
-                charSet,
-                pattern,
-                actionList
-        );
+        updateListenerRegistration(allowedChars, listenerKey);
+        return createCharsSettings(allowedChars, getChatActions(allowedChars));
     }
 
-    private BookCharsSettings bookCharsSettings;
-
-    private void setupBookChars(ConfigurationSection allowedBookChars) {
-        if (isNullSection(allowedBookChars)) {
-            return;
-        }
-
-        ChatListener chatListener = plugin.getChatListeners().get(BookFilter.class.getSimpleName());
-
-        boolean shouldBeRegistered = allowedBookChars.getBoolean("enable");
-
-        if (chatListener.isRegistered() != shouldBeRegistered) {
-            chatListener.setRegistered(shouldBeRegistered);
-        }
-
-        BlockType mode = BlockType.valueOf(allowedBookChars.getString("mode").toUpperCase());
+    private CharsSettings createCharsSettings(ConfigurationSection section, ObjectList<Action> actions) {
+        BlockType mode = BlockType.valueOf(section.getString("mode").toUpperCase());
         IntSet charSet = null;
         Pattern pattern = null;
         switch (mode) {
-            case STRING -> charSet = getAllowedChars(allowedBookChars.getString("pattern"));
-            case PATTERN -> pattern = Pattern.compile(allowedBookChars.getString("pattern"));
+            case STRING -> charSet = getAllowedChars(section.getString("pattern"));
+            case PATTERN -> pattern = Pattern.compile(section.getString("pattern"));
         }
-
-        ObjectList<Action> actionList = getChatActions(allowedBookChars);
-
-        this.bookCharsSettings = new BookCharsSettings(
-                mode,
-                charSet,
-                pattern,
-                actionList
-        );
-    }
-
-    private SignCharsSettings signCharsSettings;
-
-    private void setupSignChars(ConfigurationSection allowedSignChars) {
-        if (isNullSection(allowedSignChars)) {
-            return;
-        }
-
-        ChatListener chatListener = plugin.getChatListeners().get(SignFilter.class.getSimpleName());
-
-        boolean shouldBeRegistered = allowedSignChars.getBoolean("enable");
-
-        if (chatListener.isRegistered() != shouldBeRegistered) {
-            chatListener.setRegistered(shouldBeRegistered);
-        }
-
-        BlockType mode = BlockType.valueOf(allowedSignChars.getString("mode").toUpperCase());
-        IntSet charSet = null;
-        Pattern pattern = null;
-        switch (mode) {
-            case STRING -> charSet = getAllowedChars(allowedSignChars.getString("pattern"));
-            case PATTERN -> pattern = Pattern.compile(allowedSignChars.getString("pattern"));
-        }
-
-        ObjectList<Action> actionList = getChatActions(allowedSignChars);
-
-        this.signCharsSettings = new SignCharsSettings(
-                mode,
-                charSet,
-                pattern,
-                actionList
-        );
-    }
-
-    private CommandCharsSettings commandCharsSettings;
-
-    private void setupCommandChars(ConfigurationSection allowedCommandChars) {
-        if (isNullSection(allowedCommandChars)) {
-            return;
-        }
-
-        ChatListener chatListener = plugin.getChatListeners().get(CommandFilter.class.getSimpleName());
-
-        boolean shouldBeRegistered = allowedCommandChars.getBoolean("enable");
-
-        if (chatListener.isRegistered() != shouldBeRegistered) {
-            chatListener.setRegistered(shouldBeRegistered);
-        }
-
-        BlockType mode = BlockType.valueOf(allowedCommandChars.getString("mode").toUpperCase());
-        IntSet charSet = null;
-        Pattern pattern = null;
-        switch (mode) {
-            case STRING -> charSet = getAllowedChars(allowedCommandChars.getString("pattern"));
-            case PATTERN -> pattern = Pattern.compile(allowedCommandChars.getString("pattern"));
-        }
-
-        ObjectList<Action> actionList = getChatActions(allowedCommandChars);
-
-        this.commandCharsSettings = new CommandCharsSettings(
-                mode,
-                charSet,
-                pattern,
-                actionList
-        );
+        return new CharsSettings(mode, charSet, pattern, actions);
     }
 
     private IntSet getAllowedChars(String allowed) {
@@ -201,20 +97,11 @@ public class Config {
         return chars;
     }
 
-    private NumberCheckSettings numberCheckSettings;
-
-    private void setupNumberCheck(ConfigurationSection numbersCheck) {
+    private NumberCheckSettings setupNumberCheck(ConfigurationSection numbersCheck) {
         if (isNullSection(numbersCheck)) {
-            return;
+            return null;
         }
-
-        ChatListener chatListener = plugin.getChatListeners().get(NumbersCheck.class.getSimpleName());
-
-        boolean shouldBeRegistered = numbersCheck.getBoolean("enable");
-
-        if (chatListener.isRegistered() != shouldBeRegistered) {
-            chatListener.setRegistered(shouldBeRegistered);
-        }
+        updateListenerRegistration(numbersCheck, NumbersCheck.class.getSimpleName());
 
         int maxNumbers = numbersCheck.getInt("maxmsgnumbers", 12);
         boolean strictCheck = numbersCheck.getBoolean("strict");
@@ -222,7 +109,7 @@ public class Config {
 
         ObjectList<Action> actionList = getChatActions(numbersCheck);
 
-        this.numberCheckSettings = new NumberCheckSettings(
+        return new NumberCheckSettings(
                 maxNumbers,
                 strictCheck,
                 stripColor,
@@ -230,47 +117,29 @@ public class Config {
         );
     }
 
-    private CaseCheckSettings caseCheckSettings;
-
-    private void setupCaseCheck(ConfigurationSection caseCheck) {
+    private CaseCheckSettings setupCaseCheck(ConfigurationSection caseCheck) {
         if (isNullSection(caseCheck)) {
-            return;
+            return null;
         }
-
-        ChatListener chatListener = plugin.getChatListeners().get(CaseCheck.class.getSimpleName());
-
-        boolean shouldBeRegistered = caseCheck.getBoolean("enable");
-
-        if (chatListener.isRegistered() != shouldBeRegistered) {
-            chatListener.setRegistered(shouldBeRegistered);
-        }
+        updateListenerRegistration(caseCheck, CaseCheck.class.getSimpleName());
 
         int maxUpperCasePercent = caseCheck.getInt("max_uppercase_percent", 70);
         boolean strictCheck = caseCheck.getBoolean("strict");
 
         ObjectList<Action> actionList = getChatActions(caseCheck);
 
-        this.caseCheckSettings = new CaseCheckSettings(
+        return new CaseCheckSettings(
                 maxUpperCasePercent,
                 strictCheck,
                 actionList
         );
     }
 
-    private SameMessagesSettings sameMessagesSettings;
-
-    private void setupSameMessages(ConfigurationSection sameMessages) {
+    private SameMessagesSettings setupSameMessages(ConfigurationSection sameMessages) {
         if (isNullSection(sameMessages)) {
-            return;
+            return null;
         }
-
-        ChatListener chatListener = plugin.getChatListeners().get(SameMessageLimiter.class.getSimpleName());
-
-        boolean shouldBeRegistered = sameMessages.getBoolean("enable");
-
-        if (chatListener.isRegistered() != shouldBeRegistered) {
-            chatListener.setRegistered(shouldBeRegistered);
-        }
+        updateListenerRegistration(sameMessages, SameMessageLimiter.class.getSimpleName());
 
         int samePercents = sameMessages.getInt("same_percents", 70);
         int maxSameMessage = sameMessages.getInt("max_same_message", 2);
@@ -281,7 +150,7 @@ public class Config {
 
         ObjectList<Action> actionList = getChatActions(sameMessages);
 
-        this.sameMessagesSettings = new SameMessagesSettings(
+        return new SameMessagesSettings(
                 samePercents,
                 maxSameMessage,
                 minMessageLength,
@@ -292,20 +161,11 @@ public class Config {
         );
     }
 
-    private BanWordsSettings banWordsSettings;
-
-    private void setupBanWords(ConfigurationSection banWords) {
+    private BanWordsSettings setupBanWords(ConfigurationSection banWords) {
         if (isNullSection(banWords)) {
-            return;
+            return null;
         }
-
-        ChatListener chatListener = plugin.getChatListeners().get(BanWords.class.getSimpleName());
-
-        boolean shouldBeRegistered = banWords.getBoolean("enable");
-
-        if (chatListener.isRegistered() != shouldBeRegistered) {
-            chatListener.setRegistered(shouldBeRegistered);
-        }
+        updateListenerRegistration(banWords, BanWords.class.getSimpleName());
 
         BlockType mode = BlockType.valueOf(banWords.getString("mode").toUpperCase());
         ObjectSet<String> banWordsString = null;
@@ -334,7 +194,7 @@ public class Config {
 
         ObjectList<Action> actionList = getChatActions(banWords);
 
-        this.banWordsSettings = new BanWordsSettings(
+        return new BanWordsSettings(
                 mode,
                 banWordsString,
                 banWordsPattern,
@@ -347,6 +207,14 @@ public class Config {
 
     private boolean isNullSection(ConfigurationSection section) {
         return section == null;
+    }
+
+    private void updateListenerRegistration(ConfigurationSection section, String listenerKey) {
+        ChatListener chatListener = plugin.getChatListeners().get(listenerKey);
+        boolean shouldBeRegistered = section.getBoolean("enable");
+        if (chatListener.isRegistered() != shouldBeRegistered) {
+            chatListener.setRegistered(shouldBeRegistered);
+        }
     }
 
     public void setupCommands(String path) {

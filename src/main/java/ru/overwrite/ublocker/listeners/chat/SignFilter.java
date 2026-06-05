@@ -5,7 +5,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.block.SignChangeEvent;
 import ru.overwrite.ublocker.UniversalBlocker;
-import ru.overwrite.ublocker.configuration.data.SignCharsSettings;
+import ru.overwrite.ublocker.configuration.data.CharsSettings;
 
 public class SignFilter extends ChatListener {
 
@@ -21,7 +21,7 @@ public class SignFilter extends ChatListener {
         if (super.isAdmin(p, "ublocker.bypass.signchars")) {
             return;
         }
-        SignCharsSettings signCharsSettings = pluginConfig.getSignCharsSettings();
+        CharsSettings signCharsSettings = pluginConfig.getSignCharsSettings();
         String line0 = e.getLine(0);
         String line1 = e.getLine(1);
         String line2 = e.getLine(2);

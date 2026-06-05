@@ -5,7 +5,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.player.PlayerCommandPreprocessEvent;
 import ru.overwrite.ublocker.UniversalBlocker;
-import ru.overwrite.ublocker.configuration.data.CommandCharsSettings;
+import ru.overwrite.ublocker.configuration.data.CharsSettings;
 
 public class CommandFilter extends ChatListener {
 
@@ -21,7 +21,7 @@ public class CommandFilter extends ChatListener {
         if (super.isAdmin(p, "ublocker.bypass.commandchars")) {
             return;
         }
-        CommandCharsSettings commandCharsSettings = pluginConfig.getCommandCharsSettings();
+        CharsSettings commandCharsSettings = pluginConfig.getCommandCharsSettings();
         String message = e.getMessage();
         String blockedChar = switch (commandCharsSettings.mode()) {
             case STRING -> getFirstBlockedChar(message, commandCharsSettings.charSet());

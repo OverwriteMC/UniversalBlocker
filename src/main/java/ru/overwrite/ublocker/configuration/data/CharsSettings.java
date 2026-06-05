@@ -7,7 +7,7 @@ import ru.overwrite.ublocker.blockgroups.BlockType;
 
 import java.util.regex.Pattern;
 
-public record CommandCharsSettings(
+public record CharsSettings(
         BlockType mode,
         IntSet charSet,
         Pattern pattern,

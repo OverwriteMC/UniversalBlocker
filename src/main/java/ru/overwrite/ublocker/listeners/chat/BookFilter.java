@@ -5,7 +5,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.player.PlayerEditBookEvent;
 import ru.overwrite.ublocker.UniversalBlocker;
-import ru.overwrite.ublocker.configuration.data.BookCharsSettings;
+import ru.overwrite.ublocker.configuration.data.CharsSettings;
 
 public class BookFilter extends ChatListener {
 
@@ -21,9 +21,7 @@ public class BookFilter extends ChatListener {
         if (super.isAdmin(p, "ublocker.bypass.bookchars")) {
             return;
         }
-
-        BookCharsSettings bookCharsSettings = pluginConfig.getBookCharsSettings();
-
+        CharsSettings bookCharsSettings = pluginConfig.getBookCharsSettings();
         for (String page : e.getNewBookMeta().getPages()) {
             String serialisedMessage = page.replace("\n", "");
             String blockedChar = switch (bookCharsSettings.mode()) {

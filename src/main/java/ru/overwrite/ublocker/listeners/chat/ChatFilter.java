@@ -5,7 +5,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
 import ru.overwrite.ublocker.UniversalBlocker;
-import ru.overwrite.ublocker.configuration.data.ChatCharsSettings;
+import ru.overwrite.ublocker.configuration.data.CharsSettings;
 
 public class ChatFilter extends ChatListener {
 
@@ -21,7 +21,7 @@ public class ChatFilter extends ChatListener {
         if (super.isAdmin(p, "ublocker.bypass.chatchars")) {
             return;
         }
-        ChatCharsSettings chatCharsSettings = pluginConfig.getChatCharsSettings();
+        CharsSettings chatCharsSettings = pluginConfig.getChatCharsSettings();
         String message = e.getMessage();
         String blockedChar = switch (chatCharsSettings.mode()) {
             case STRING -> getFirstBlockedChar(message, chatCharsSettings.charSet());
