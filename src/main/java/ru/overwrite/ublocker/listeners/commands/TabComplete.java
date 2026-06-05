@@ -1,6 +1,7 @@
 package ru.overwrite.ublocker.listeners.commands;
 
 import com.destroystokyo.paper.event.server.AsyncTabCompleteEvent;
+import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import it.unimi.dsi.fastutil.objects.ObjectList;
 import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
@@ -82,7 +83,7 @@ public class TabComplete implements Listener {
         }
         String executedCommandBase = Utils.cutCommand(buffer).substring(1);
         Command comInMap = group.blockAliases() ? Bukkit.getCommandMap().getCommand(executedCommandBase) : null;
-        List<String> aliases = comInMap != null ? comInMap.getAliases() : List.of();
+        List<String> aliases = comInMap != null ? new ObjectArrayList<>(comInMap.getAliases()) : List.of();
         if (!aliases.isEmpty() && !aliases.contains(comInMap.getName())) {
             aliases.add(comInMap.getName());
         }

@@ -1,5 +1,6 @@
 package ru.overwrite.ublocker.listeners.commands;
 
+import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import it.unimi.dsi.fastutil.objects.ObjectList;
 import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
@@ -54,7 +55,7 @@ public class CommandHider implements Listener {
 
     private boolean checkStringBlock(String command, CommandGroup group) {
         Command comInMap = group.blockAliases() ? Bukkit.getCommandMap().getCommand(command) : null;
-        List<String> aliases = comInMap != null ? comInMap.getAliases() : List.of();
+        List<String> aliases = comInMap != null ? new ObjectArrayList<>(comInMap.getAliases()) : List.of();
         boolean matched = false;
         for (String com : group.commandsToBlockString()) {
             if (command.equalsIgnoreCase(com) || aliases.contains(com)) {
